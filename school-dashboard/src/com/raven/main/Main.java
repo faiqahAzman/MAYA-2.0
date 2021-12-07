@@ -4,7 +4,11 @@ import com.raven.component.Header;
 import com.raven.component.Menu;
 import com.raven.event.EventMenuSelected;
 import com.raven.event.EventShowPopupMenu;
-import com.raven.form.Form1;
+import com.raven.form.Course_Registered;
+import com.raven.form.Course_Search;
+import com.raven.form.Enquiry;
+import com.raven.form.FAQ;
+
 import com.raven.form.Form_Home;
 import com.raven.form.MainForm;
 import com.raven.swing.MenuItem;
@@ -14,6 +18,7 @@ import com.raven.swing.icon.IconFontSwing;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JFrame;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
@@ -26,10 +31,12 @@ public class Main extends javax.swing.JFrame {
     private Header header;
     private MainForm main;
     private Animator animator;
+    private FAQ faq;
 
     public Main() {
         initComponents();
         init();
+        
     }
 
     private void init() {
@@ -38,17 +45,56 @@ public class Main extends javax.swing.JFrame {
         menu = new Menu();
         header = new Header();
         main = new MainForm();
+        
+        
+        
+         
         menu.addEvent(new EventMenuSelected() {
             @Override
             public void menuSelected(int menuIndex, int subMenuIndex) {
                 System.out.println("Menu Index : " + menuIndex + " SubMenu Index " + subMenuIndex);
+                
                 if (menuIndex == 0) {
-                    if (subMenuIndex == 0) {
+                    if (subMenuIndex == -1) {
                         main.showForm(new Form_Home());
                     } else if (subMenuIndex == 1) {
-                        main.showForm(new Form1());
+                       // main.showForm(new Form1());
                     }
+                    
+                    
                 }
+                
+                if (menuIndex == 1) {
+                    if (subMenuIndex == 0) {
+                        main.showForm(new Course_Registered());
+                    } else if (subMenuIndex == 1) {
+                        main.showForm(new Course_Search());
+                    } 
+                    
+                    
+                }
+                
+                if (menuIndex == 2) {
+                    if (subMenuIndex == 0) {
+                        main.showForm(new Enquiry());
+                    } else if (subMenuIndex == 1) {
+                       // main.showForm(new Course_Search());
+                    } 
+                    
+                    
+                }
+                
+                
+                if (menuIndex == 3) {
+                    if (subMenuIndex == 0) {
+                        main.showForm(new FAQ());
+                    } 
+                }
+            }
+
+            @Override
+            public boolean menuPressed(MenuItem aThis, boolean b) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         });
         menu.addEventShowPopup(new EventShowPopupMenu() {
@@ -63,6 +109,7 @@ public class Main extends javax.swing.JFrame {
             }
         });
         menu.initMenuItem();
+        
         bg.add(menu, "w 230!, spany 2");    // Span Y 2cell
         bg.add(header, "h 50!, wrap");
         bg.add(main, "w 100%, h 100%");
@@ -100,6 +147,7 @@ public class Main extends javax.swing.JFrame {
                 if (menu.isShowMenu()) {
                     menu.hideallMenu();
                 }
+                
             }
         });
         //  Init google icon font
@@ -117,7 +165,7 @@ public class Main extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
 
-        bg.setBackground(new java.awt.Color(245, 245, 245));
+        bg.setBackground(new java.awt.Color(244, 247, 252));
         bg.setOpaque(true);
 
         javax.swing.GroupLayout bgLayout = new javax.swing.GroupLayout(bg);
@@ -147,6 +195,8 @@ public class Main extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     public static void main(String args[]) {
+        
+        
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -175,6 +225,8 @@ public class Main extends javax.swing.JFrame {
             @Override
             public void run() {
                 new Main().setVisible(true);
+                
+                
             }
         });
     }

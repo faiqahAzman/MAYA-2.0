@@ -1,5 +1,6 @@
 package com.raven.swing;
 
+
 import com.raven.event.EventMenu;
 import com.raven.event.EventMenuSelected;
 import com.raven.model.ModelMenu;
@@ -10,9 +11,16 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.SwingUtilities;
 import net.miginfocom.swing.MigLayout;
 
 public class MenuItem extends javax.swing.JPanel {
+
+   
+
+   
 
     public ModelMenu getMenu() {
         return menu;
@@ -62,6 +70,8 @@ public class MenuItem extends javax.swing.JPanel {
                 if (menu.getSubMenu().length > 0) {
                     if (event.menuPressed(MenuItem.this, !open)) {
                         open = !open;
+                        
+                        
                     }
                 }
                 eventSelected.menuSelected(index, -1);
@@ -80,8 +90,14 @@ public class MenuItem extends javax.swing.JPanel {
             });
             add(item);
         }
+        
+       
+        
+      
+        
     }
 
+   
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -104,7 +120,7 @@ public class MenuItem extends javax.swing.JPanel {
         int height = getPreferredSize().height;
         Graphics2D g2 = (Graphics2D) grphcs;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(new Color(50, 50, 50));
+        g2.setColor(new Color(0, 0, 0,80));
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
         g2.fillRect(0, 2, width, 38);
         g2.setComposite(AlphaComposite.SrcOver);
@@ -118,7 +134,12 @@ public class MenuItem extends javax.swing.JPanel {
         if (menu.getSubMenu().length > 0) {
             createArrowButton(g2);
         }
+        
+       
+       
         super.paintComponent(grphcs);
+        
+        
     }
 
     private void createArrowButton(Graphics2D g2) {

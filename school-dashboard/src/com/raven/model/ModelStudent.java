@@ -8,6 +8,20 @@ import javax.swing.Icon;
 
 public class ModelStudent {
 
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public Icon getIcon() {
         return icon;
     }
@@ -54,6 +68,7 @@ public class ModelStudent {
         this.gender = gender;
         this.course = course;
         this.fees = fees;
+        this.email= email;
     }
 
     public ModelStudent() {
@@ -64,6 +79,7 @@ public class ModelStudent {
     private String gender;
     private String course;
     private double fees;
+    private String email;
 
     public Object[] toRowTable(EventAction event) {
         DecimalFormat df = new DecimalFormat("$#,##0.00");

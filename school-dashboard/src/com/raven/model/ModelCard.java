@@ -4,6 +4,21 @@ import javax.swing.Icon;
 
 public class ModelCard {
 
+   
+    /**
+     * @return the desc
+     */
+    public String getDesc() {
+        return desc;
+    }
+
+    /**
+     * @param desc the desc to set
+     */
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -12,13 +27,7 @@ public class ModelCard {
         this.title = title;
     }
 
-    public double getValues() {
-        return values;
-    }
-
-    public void setValues(double values) {
-        this.values = values;
-    }
+   
 
     public int getPercentage() {
         return percentage;
@@ -36,18 +45,18 @@ public class ModelCard {
         this.icon = icon;
     }
 
-    public ModelCard(String title, double values, int percentage, Icon icon) {
+    public ModelCard(String title,String desc, int percentage) {
         this.title = title;
-        this.values = values;
+        this.desc = desc;
         this.percentage = percentage;
-        this.icon = icon;
+        //this.icon = icon;
     }
 
     public ModelCard() {
     }
 
     private String title;
-    private double values;
+    private String desc;
     private int percentage;
     private Icon icon;
 }
