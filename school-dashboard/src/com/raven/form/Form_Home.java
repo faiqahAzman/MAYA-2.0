@@ -4,21 +4,41 @@ import com.raven.dialog.Message;
 import com.raven.main.Main;
 import com.raven.model.ModelCard;
 import com.raven.model.ModelStudent;
+import com.raven.swing.Grids;
+import com.raven.swing.TableColorCellRenderer;
 import com.raven.swing.icon.GoogleMaterialDesignIcons;
 import com.raven.swing.icon.IconFontSwing;
 import com.raven.swing.noticeboard.ModelNoticeBoard;
 import com.raven.swing.table.EventAction;
 import java.awt.Color;
+import java.awt.Component;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 
 public class Form_Home extends javax.swing.JPanel {
 
+    TableColorCellRenderer renderer = new TableColorCellRenderer();
+    Grids grid = new Grids();
     public Form_Home() {
         initComponents();
-        table1.fixTable(jScrollPane1);
+        Grids table1 = new Grids();
+        //stable1.fixTable(jScrollPane1);
+        table1.setDefaultRenderer(String.class, renderer);
+        table1.updateCell(1, 1, Color.YELLOW);
+        
         setOpaque(false);
         initData();
+        ReadFile();
+        
+        
     }
 
     private void initData() {
@@ -48,7 +68,7 @@ public class Form_Home extends javax.swing.JPanel {
                 }
             }
         };
-        /*table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("")), "Introduction to Data Science", "Monday", "2:00 - 3:00 pm", 300).toRowTable(eventAction));
+       /* table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("")), "Introduction to Data Science", "Monday", "2:00 - 3:00 pm", 300).toRowTable(eventAction));
         table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile1.jpg")), "Dara", "Male", "C++", 300).toRowTable(eventAction));
         table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
         table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
@@ -86,6 +106,65 @@ public class Form_Home extends javax.swing.JPanel {
         noticeBoard.addNoticeBoard(new ModelNoticeBoard(new Color(238, 46, 57), "Push", "7:15 AM", "Makes the row and/or column that the component is residing in grow with \"weight\". This can be used instead of having a \"grow\" keyword in the column/row constraints."));
         noticeBoard.scrollToTop();
     }
+    
+    public void ReadFile() {
+        
+         EventAction eventAction = new EventAction() {
+            @Override
+            public void delete(ModelStudent student) {
+                if (showMessage("Delete Student : " + student.getName())) {
+                    System.out.println("User click OK");
+                } else {
+                    System.out.println("User click Cancel");
+                }
+            }
+
+            @Override
+            public void update(ModelStudent student) {
+                if (showMessage("Update Student : " + student.getName())) {
+                    System.out.println("User click OK");
+                } else {
+                    System.out.println("User click Cancel");
+                }
+            }
+        };
+        
+        
+        String filePath = "C:\\Users\\user\\Desktop\\timetable.txt";
+        File file = new File(filePath);
+        
+        try ( BufferedReader br = new BufferedReader(new FileReader(file))){
+            String firstLine = br.readLine().trim();
+            String[] columnName = firstLine.split(",");
+            DefaultTableModel model = (DefaultTableModel)table1.getModel();
+            
+            model.setColumnIdentifiers(columnName);
+            
+            Object[] tableLines = br.lines().toArray();
+            
+            for (int i = 0; i < tableLines.length; i++) {
+                
+                String line = tableLines[i].toString().trim();
+                String [] dataRow = line.split("/");
+                
+                table1.addRow(dataRow);
+                        
+                
+            }
+            
+            
+            
+            
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+        
+        
+        
+    }
+    
+    
+   
 
     private boolean showMessage(String message) {
         Message obj = new Message(Main.getFrames()[0], true);
@@ -104,7 +183,27 @@ public class Form_Home extends javax.swing.JPanel {
         jLabel4 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        table1 = new com.raven.swing.table.Table();
+        table1 = new com.raven.swing.table.Table()
+        //original is new com.raven.swing.table.Table()
+        //sort of new is new Grids();
+        {
+
+            @Override
+
+            public Component prepareRenderer (TableCellRenderer renderer, int rowIndex, int columnIndex){
+
+                Component c = super.prepareRenderer(renderer, rowIndex, columnIndex);
+
+                if(columnIndex==0){
+                    c.setBackground(new Color(0xEFF3F9));
+                }
+
+                return c;
+            }
+
+        }
+
+        ;
         jLabel5 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         imageAvatar1 = new com.raven.swing.ImageAvatar();
@@ -151,7 +250,8 @@ public class Form_Home extends javax.swing.JPanel {
                 .addGap(9, 9, 9)
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 1, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
-                .addComponent(noticeBoard, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE))
+                .addComponent(noticeBoard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
@@ -200,9 +300,9 @@ public class Form_Home extends javax.swing.JPanel {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 524, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 485, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(45, 45, 45))
         );
 
         jPanel3.setBackground(new java.awt.Color(58, 83, 155));

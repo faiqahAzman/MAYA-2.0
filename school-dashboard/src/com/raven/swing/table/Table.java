@@ -11,6 +11,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
+import com.raven.swing.table.EventAction;
 
 public class Table extends JTable {
 
@@ -32,7 +33,7 @@ public class Table extends JTable {
         setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable jtable, Object o, boolean selected, boolean focus, int i, int i1) {
-                if (o instanceof ModelProfile) {
+                /*if (o instanceof ModelProfile) {
                     ModelProfile data = (ModelProfile) o;
                     Profile cell = new Profile(data);
                     if (selected) {
@@ -40,9 +41,9 @@ public class Table extends JTable {
                     } else {
                         cell.setBackground(Color.WHITE);
                     }
-                    return cell;
+                    return cell;*/
 
-                } else if (o instanceof ModelAction) {
+                if (o instanceof ModelAction) {
                     ModelAction data = (ModelAction) o;
                     Action cell = new Action(data);
                     if (selected) {
@@ -62,6 +63,17 @@ public class Table extends JTable {
                     }
                     return com;
                 }
+                
+                
+                 /*Component com = super.getTableCellRendererComponent(jtable, o, selected, focus, i, i1);
+                    setBorder(noFocusBorder);
+                    com.setForeground(new Color(102, 102, 102));
+                    if (selected) {
+                        com.setBackground(new Color(239, 244, 255));
+                    } else {
+                        com.setBackground(Color.WHITE);
+                    }
+                    return com;*/
             }
         });
     }
@@ -89,3 +101,4 @@ public class Table extends JTable {
         scroll.setBorder(new EmptyBorder(5, 10, 5, 10));
     }
 }
+   
