@@ -12,6 +12,8 @@ import javax.swing.border.*;
 import javax.swing.table.*;
 import com.raven.swing.Button;
 
+
+
 /**
  *
  * @author user
@@ -28,6 +30,7 @@ implements TableCellRenderer, TableCellEditor, ActionListener, MouseListener{
 	private Button editButton;
 	private Object editorValue;
 	private boolean isButtonColumnEditor;
+        private Image img;
 
 	/**
 	 *  Create the ButtonColumn to be used as a renderer and editor. The
@@ -38,10 +41,11 @@ implements TableCellRenderer, TableCellEditor, ActionListener, MouseListener{
 	 *  @param action the Action to be invoked when the button is invoked
 	 *  @param column the column to which the button renderer/editor is added
 	 */
-	public ButtonColumn(JTable table, Action action,int column)
+	public ButtonColumn(JTable table, Action action,int column) 
 	{
 		this.table = table;
 		this.action = action;
+               
 
 		renderButton = new Button();
 		editButton = new Button();
@@ -99,10 +103,11 @@ implements TableCellRenderer, TableCellEditor, ActionListener, MouseListener{
 	public Component getTableCellEditorComponent(
 		JTable table, Object value, boolean isSelected, int row, int column)
 	{
-		if (value == "Add")
+		if (column==3)
 		{
 			editButton.setText( "Add" );
-			editButton.setIcon( null );
+                        editButton.setForeground(new Color(0x4285F4));
+			
 		}
 		else if (value instanceof Icon)
 		{
@@ -111,16 +116,20 @@ implements TableCellRenderer, TableCellEditor, ActionListener, MouseListener{
 		}
                 else if (column==4)
 		{
+			editButton.setText( "Delete" );
+			editButton.setForeground(Color.red);
+                        
+		}
+                else if (column==5)
+		{
 			editButton.setText( "Edit" );
+                        editButton.setForeground(new Color(0x4285F4));
 			
                         
 		}
-                else if (column==3)
-		{
-			editButton.setText( "Delete" );
-			//editButton.setIcon( (Icon)value );
+                
                        
-		}
+		
 		/*else
 		{
 			editButton.setText( value.toString() );
@@ -164,26 +173,30 @@ implements TableCellRenderer, TableCellEditor, ActionListener, MouseListener{
 		}
 
 //		renderButton.setText( (value == null) ? "" : value.toString() );
-		if (value == "Add")
+		if (column==3)
 		{
 			renderButton.setText( "Add" );
-			renderButton.setIcon( null );
+                        renderButton.setForeground(new Color(0x4285F4));
+			//renderButton.setIcon( null );
+                        
+                        
 		}
 		else if (value instanceof Icon)
 		{
 			renderButton.setText( "" );
 			renderButton.setIcon( (Icon)value );
 		}
-                else if (column==3)
+                else if (column==4)
 		{
 			renderButton.setText( "Delete" );
+                        renderButton.setForeground(Color.red);
 			//editButton.setIcon( (Icon)value );
                         
 		}
-                else if (column==4)
+                else if (column==5)
 		{
 			renderButton.setText( "Edit" );
-                        
+                        renderButton.setForeground(new Color(0x4285F4));
 			//editButton.setIcon( (Icon)value );
                         
 		}
@@ -195,6 +208,8 @@ implements TableCellRenderer, TableCellEditor, ActionListener, MouseListener{
 
 		return renderButton;
 	}
+        
+       
 
 //
 //  Implement ActionListener interface

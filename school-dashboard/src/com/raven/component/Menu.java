@@ -4,6 +4,7 @@ import com.raven.event.EventMenu;
 import com.raven.event.EventMenuSelected;
 import com.raven.event.EventShowPopupMenu;
 import com.raven.model.ModelMenu;
+import com.raven.model.ModelStudentType;
 import com.raven.swing.MenuAnimation;
 import com.raven.swing.MenuItem;
 import com.raven.swing.scrollbar.ScrollBarCustom;
@@ -44,6 +45,7 @@ public class Menu extends javax.swing.JPanel {
     private EventShowPopupMenu eventShowPopup;
     private boolean enableMenu = true;
     private boolean showMenu = true;
+    private ModelStudentType type = new ModelStudentType();
 
     public Menu() {
         initComponents();
@@ -60,6 +62,20 @@ public class Menu extends javax.swing.JPanel {
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/com/raven/icon/2.png")), "Courses", "Registered", "Search"));
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/com/raven/icon/3.png")), "Enquiries","Form"));
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/com/raven/icon/4.png")), "Help","Frequently Asked Question"));
+        
+        
+        
+        
+        
+        
+    }
+    
+    public void initMenuItemAdmin(){
+        
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/com/raven/icon/1.png")), "Dashboard","Home"));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/com/raven/icon/2.png")), "Courses", "Search"));
+        
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/com/raven/icon/5.png")), "Admin Tools","Add Module","Registered Students","Test"));
         
     }
 

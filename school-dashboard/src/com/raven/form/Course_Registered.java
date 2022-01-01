@@ -3,10 +3,12 @@ package com.raven.form;
 
 
 import com.raven.component.Card;
+
 import com.raven.dialog.EditMessage;
 import com.raven.dialog.Message;
 import com.raven.main.Main;
 import com.raven.model.ModelStudent;
+import com.raven.model.ModelStudentType;
 import com.raven.swing.Button;
 import com.raven.swing.ButtonColumn;
 
@@ -31,6 +33,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractCellEditor;
@@ -50,6 +56,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
+import loginpage.ConnectDatabase;
 
 
 public class Course_Registered extends javax.swing.JPanel {
@@ -57,210 +64,155 @@ public class Course_Registered extends javax.swing.JPanel {
    
     private Card card;
     Button button = new Button();
-    
+   Connection con;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+     DefaultTableModel tblModel;
+      private ModelStudentType type = new ModelStudentType();
 
     public Course_Registered() {
         
-        
+         con = ConnectDatabase.connectdb();
         initComponents();
         setVisible(true);
         setOpaque(false);
-        table1.fixTable(jScrollPane2);
-        final RowPopUp pop = new RowPopUp(table1);
-        //initTableData();
-        ReadFile();
+        table1.fixTable(jScrollPane1);
+        tblModel = (DefaultTableModel) table1.getModel();
+        init();
         
-        //table1.getColumnModel().getColumn(4).setCellRenderer(new ButtonRenderer());
-        //table1.getColumnModel().getColumn(4).setCellEditor(new ButtonEditor(new JCheckBox()));
       
+  
        
-       
-       
-       Action delete = new AbstractAction()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                
-                JTable table = (JTable)e.getSource();
-                int modelRow = Integer.valueOf( e.getActionCommand() );
-                ((DefaultTableModel)table.getModel()).removeRow(modelRow);
-            }
-        };
-       
+    }
+    
+    private void init() {
+        
+        showButton();
+        getModules();
+    }
+    
+    private void showButton() {
+        
         Action edit = new AbstractAction()
         {
             public void actionPerformed(ActionEvent e)
             {
                 
-                //JOptionPane.showInternalMessageDialog(form_Home1, NAME, NAME, HEIGHT);
+               
                 SpinnerNumberModel sModel = new SpinnerNumberModel(0, 0, 30, 1);
                 JSpinner spinner = new JSpinner(sModel);
-                int option = JOptionPane.showOptionDialog(null, spinner, "Enter new targent number", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+                
+                JTable table = (JTable)e.getSource();
+                int selectedRowIndex = table.getSelectedRow();
+                
+                try{
+                
+                
+                //int target_num = Integer.parseInt(table.getValueAt(selectedRowIndex, 3));
+                //int target_num = Integer.parseInt((int) table.getValueAt(selectedRowIndex, 3));
+                int newTG = Integer.parseInt(JOptionPane.showInputDialog(null, "Target Number", 0)); 
+                
+                //table.setValueAt(newTG, selectedRowIndex, 3);
+                
+                   try {
+                       
+                        updateTG(newTG);
+                        
+                        table.setValueAt(newTG, selectedRowIndex, 3);
+                    } catch (Exception a) {
+                        JOptionPane.showMessageDialog(null, a.getMessage());
+                    }
+             
+                
+                
+                } catch (Exception ae) {
+                    JOptionPane.showMessageDialog(null, "No Row Selected");
+                }
+                
+                /*int option = JOptionPane.showOptionDialog(null, spinner, "Enter new target number", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
                 if (option == JOptionPane.CANCEL_OPTION)
                 {
                     // user hit cancel
                 } else if (option == JOptionPane.OK_OPTION)
                 {
-                    // user entered a number
+                    table.setValueAt(option, selectedRowIndex, 3);
+                    updateTG(option);
+                }   
+                    
                 }
+                catch(Exception ae) {
+                     JOptionPane.showMessageDialog(null, "No Row Selected");   
+                        }*/
                
             }
         };
        
-        ButtonColumn buttonColumn = new ButtonColumn(table1, delete, 3);
-        ButtonColumn buttonColumn2 = new ButtonColumn(table1, edit, 4);
-        /*button.addActionListener(
-        
-       
-      new ActionListener()
-      {
-         
-        public void actionPerformed(ActionEvent ae)
-        {
-          //JOptionPane.showMessageDialog(null,"Do you want to modify this line?");
-          pop.show(button, button.getWidth()/2, button.getHeight()/2);
-        }
-      }
-    );*/
-       
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
-       
-        
-       
-    }
-    
-   /*private void initTableData() {
-        EventAction eventAction = new EventAction() {
-            @Override
-            public void delete(ModelStudent student) {
-                if (showMessage("Delete Student : " + student.getName())) {
-                    System.out.println("User click OK");
-                } else {
-                    System.out.println("User click Cancel");
-                }
-            }
-
-            @Override
-            public void update(ModelStudent student) {
-                if (showMessage("Update Student : " + student.getName())) {
-                    System.out.println("User click OK");
-                } else {
-                    System.out.println("User click Cancel");
-                }
-            }
-        };
-        //table1.addRow().toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile1.jpg")), "Dara", "Male", "C++", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-    }*/
-    
-    
-
-    
-    public void ReadFile() {
-        
-       
-        
-        
-        
-        String filePath = "C:\\Users\\user\\Desktop\\module.txt";
-        File file = new File(filePath);
-        
-        try ( BufferedReader br = new BufferedReader(new FileReader(file))){
-            String firstLine = br.readLine().trim();
-            String[] columnName = firstLine.split(",");
-            DefaultTableModel model = (DefaultTableModel)table1.getModel();
-            model.setColumnIdentifiers(columnName);
-            
-            Object[] tableLines = br.lines().toArray();
-            
-            for (int i = 0; i < tableLines.length; i++) {
-                
-                String line = tableLines[i].toString().trim();
-                String [] dataRow = line.split("/");
-                model.addRow(dataRow);
-                
-                
-                
-                
-                        
-                
-            }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+        if(type.checkType()== 0){
+        ButtonColumn buttonColumn2 = new ButtonColumn(table1, edit, 5);
         }
         
-        
-        
     }
     
-    /* private boolean showMessage(String message) {
-        Message obj = new Message(Main.getFrames()[0], true);
-        obj.showMessage(message);
-        return obj.isOk();
-    }*/
-     
-    private boolean showMessage(String message) {
-        Message obj = new Message(Main.getFrames()[0], true);
-        obj.showMessage(message);
-        return obj.isOk();
+    private void getModules() {
+        
+        
+        String q1 = "SELECT * FROM TIMETABLE_MODULES";
+        try {
+            ps = con.prepareStatement(q1);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                String MODULES = rs.getString("MODULES");
+                String OCC = rs.getString("OCCURENCE");
+                String ACTIVITY = rs.getString("ACTIVITYTYPE");
+                String TG = rs.getString("CAPACITY");
+
+                
+                String tbData[] = {MODULES, OCC, ACTIVITY,TG};
+                DefaultTableModel tblModel = (DefaultTableModel) table1.getModel();
+
+                tblModel.addRow(tbData);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
     }
+    
+    private void updateTG(int TG) {
+        
+        
+        try {
+            DefaultTableModel tb = (DefaultTableModel) table1.getModel();
+            int rows = tb.getRowCount();
+       //for (int i = 0; i < rows; i++) {
+           String modules = tb.getValueAt(table1.getSelectedRow(), 0).toString();
+           String occurence = tb.getValueAt(table1.getSelectedRow(), 1).toString();
+           String act = tb.getValueAt(table1.getSelectedRow(), 2).toString();
+
+           //String query = "UPDATE TIMETABLE_MODULES SET CAPACITY = '"+TG+"' WHERE MODULES ='"+a+"'";
+           String query = "UPDATE TIMETABLE_MODULES"+" SET CAPACITY = "+TG+" WHERE MODULES ='"+modules+"'AND "
+                   + "OCCURENCE ="+occurence+" AND ACTIVITYTYPE='"+act+"'"  ;
+           ps = con.prepareStatement(query);
+
+           //ps.setInt(7, TG);
+           ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Updated Successfully");
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    
+   
     
     
      
    
      
-    class ButtonEditor extends DefaultCellEditor 
-  {
-    private String label;
-    //private JButton btn;
-   
-    
-    public ButtonEditor(JCheckBox checkBox)
-    {
-        
-      super(checkBox);
-      
-    }
-    public Component getTableCellEditorComponent(JTable table, Object value,
-    boolean isSelected, int row, int column) 
-    {
-        
-      label = (value == null) ? "..." : value.toString();
-      button.setText(label);
-      button.setFont(new Font("Tahoma", Font.BOLD, 14));
-      return button;
-    }
-    public Object getCellEditorValue() 
-    {
-        
-      return new String(label);
-    }
      
   
 
   
-  }
+  
    
    
     
@@ -270,12 +222,11 @@ public class Course_Registered extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        form_Home1 = new com.raven.form.Form_Home();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
         table1 = new com.raven.swing.table.TableNew();
-        degreeInfo1 = new com.raven.component.DegreeInfo();
+        searchbar = new javax.swing.JTextField();
 
         jPanel1.setOpaque(false);
 
@@ -287,31 +238,53 @@ public class Course_Registered extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5"
+                "Modules", "Occurence", "Activity", "Capacity", "", ""
             }
         ));
-        jScrollPane2.setViewportView(table1);
+        jScrollPane1.setViewportView(table1);
+
+        searchbar.setBackground(new java.awt.Color(218, 225, 236));
+        searchbar.setForeground(new java.awt.Color(46, 59, 82));
+        searchbar.setText("   Search");
+        searchbar.setBorder(null);
+        searchbar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchbarActionPerformed(evt);
+            }
+        });
+        searchbar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                searchbarKeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
-                        .addComponent(jLabel1))
+                        .addComponent(searchbar, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(572, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1018, Short.MAX_VALUE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14)
+                .addComponent(searchbar, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -321,27 +294,56 @@ public class Course_Registered extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(degreeInfo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(degreeInfo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(38, 38, 38)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void searchbarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchbarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_searchbarActionPerformed
+
+    private void searchbarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchbarKeyReleased
+          tblModel.setRowCount(0);
+        String typedText = searchbar.getText();
+        String q1 = "SELECT * FROM TIMETABLE_MODULES WHERE MODULES LIKE ?";
+        try {
+            ps = con.prepareStatement(q1);
+            ps.setString(1, "%" + typedText.toUpperCase() + "%");
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                 String MODULES = rs.getString("MODULES");
+                String OCC = rs.getString("OCCURENCE");
+                String ACTIVITY = rs.getString("ACTIVITYTYPE");
+                String TG = rs.getString("CAPACITY");
+
+                
+                String tbData[] = {MODULES, OCC, ACTIVITY,TG};
+                
+
+                tblModel.addRow(tbData);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+
+        if (searchbar.equals("")) {
+            getModules();
+        }
+    }//GEN-LAST:event_searchbarKeyReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.raven.component.DegreeInfo degreeInfo1;
-    private com.raven.form.Form_Home form_Home1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField searchbar;
     private com.raven.swing.table.TableNew table1;
     // End of variables declaration//GEN-END:variables
 }

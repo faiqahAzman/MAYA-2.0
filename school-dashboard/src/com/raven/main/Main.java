@@ -7,6 +7,7 @@ import com.raven.component.Header;
 import com.raven.component.Menu;
 import com.raven.event.EventMenuSelected;
 import com.raven.event.EventShowPopupMenu;
+import com.raven.form.Admin;
 import com.raven.form.Course_Registered;
 import com.raven.form.Course_Search;
 import com.raven.form.Enquiry;
@@ -14,15 +15,20 @@ import com.raven.form.FAQ;
 
 import com.raven.form.Form_Home;
 import com.raven.form.MainForm;
+import com.raven.form.staff.Staff_Registered;
+import com.raven.model.ModelStudentType;
 import com.raven.swing.MenuItem;
 import com.raven.swing.PopupMenu;
+import com.raven.swing.RowPopUp;
 import com.raven.swing.icon.GoogleMaterialDesignIcons;
 import com.raven.swing.icon.IconFontSwing;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import loginpage.LoginForm1;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
@@ -36,10 +42,14 @@ public class Main extends javax.swing.JFrame {
     private MainForm main;
     private Animator animator;
     private FAQ faq;
-
+    private RowPopUp pop;
+    private ModelStudentType type;
+    
     public Main() {
         initComponents();
         init();
+        
+        
         
     }
 
@@ -49,17 +59,53 @@ public class Main extends javax.swing.JFrame {
         menu = new Menu();
         header = new Header();
         main = new MainForm();
+        pop = new RowPopUp();
+        type = new ModelStudentType();
+       
         
+        
+        header.logOut(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                dispose();
+                new LoginForm1().setVisible(true);
+            }
+        });
+       
+        
+        
+         header.minimizeEvent(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent a) {
+                setExtendedState(Main.ICONIFIED);
+                
+            }
+        });
+         
+        header.maximizeEvent(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                
+                if(getExtendedState()!= Main.MAXIMIZED_BOTH) {
+                    setExtendedState(Main.MAXIMIZED_BOTH);
+                }else {
+                    setExtendedState(Main.NORMAL);
+                }
+            }
+        });
         
         
          
+        
+        
+       
         menu.addEvent(new EventMenuSelected() {
             @Override
             public void menuSelected(int menuIndex, int subMenuIndex) {
                 System.out.println("Menu Index : " + menuIndex + " SubMenu Index " + subMenuIndex);
                 
                 if (menuIndex == 0) {
-                    if (subMenuIndex == -1) {
+                    if (subMenuIndex == 0) {
                         main.showForm(new Form_Home());
                     } else if (subMenuIndex == 1) {
                        // main.showForm(new Form1());
@@ -69,21 +115,43 @@ public class Main extends javax.swing.JFrame {
                 }
                 
                 if (menuIndex == 1) {
-                    if (subMenuIndex == 0) {
+                    
+                    if (type.checkType()==-1) {
+                       if (subMenuIndex == 0) 
+                        main.showForm(new Course_Search());
+                    
+                    }else{
+                        if (subMenuIndex == 0) {
                         main.showForm(new Course_Registered());
                     } else if (subMenuIndex == 1) {
                         main.showForm(new Course_Search());
-                    } 
+                    }  
+                        
+                    }
+                    
+                    
                     
                     
                 }
                 
                 if (menuIndex == 2) {
+                    if (type.checkType()==-1) {
+                        if (subMenuIndex == 0) {
+                        main.showForm(new Admin());
+                    } 
+                    else if (subMenuIndex == 1) {
+                        main.showForm(new Staff_Registered());
+                    }
+                    else if (subMenuIndex == 2) {
+                        main.showForm(new Staff_Registered());
+                    }
+                    } else{
                     if (subMenuIndex == 0) {
                         main.showForm(new Enquiry());
                     } else if (subMenuIndex == 1) {
                        // main.showForm(new Course_Search());
                     } 
+                    }
                     
                     
                 }
@@ -94,6 +162,10 @@ public class Main extends javax.swing.JFrame {
                         main.showForm(new FAQ());
                     } 
                 }
+                
+              
+                
+                
             }
 
             @Override
@@ -112,7 +184,10 @@ public class Main extends javax.swing.JFrame {
                 popup.setVisible(true);
             }
         });
-        menu.initMenuItem();
+        if(type.checkType()== -1){
+            menu.initMenuItemAdmin();
+        } else
+            menu.initMenuItem();
         
         bg.add(menu, "w 230!, spany 2");    // Span Y 2cell
         bg.add(header, "h 50!, wrap");
@@ -154,10 +229,21 @@ public class Main extends javax.swing.JFrame {
                 
             }
         });
+       
+        
         //  Init google icon font
         IconFontSwing.register(GoogleMaterialDesignIcons.getIconFont());
         //  Start with this form
         main.showForm(new Form_Home());
+        
+      
+        
+        
+        
+    }
+    
+    private void showPopUp() {
+        
     }
 
     @SuppressWarnings("unchecked")
@@ -234,8 +320,11 @@ public class Main extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new Main().setVisible(true);
-                new Main().setDefaultCloseOperation(EXIT_ON_CLOSE);
+                new LoginForm1().setVisible(true);
+                //new Main().setVisible(true);
+                
+                
+                
                 
                 
             }

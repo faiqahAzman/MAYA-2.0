@@ -6,6 +6,7 @@
 package com.raven.swing;
 
 import com.raven.dialog.EditMessage;
+import com.raven.form.MainForm;
 import com.raven.main.Main;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
@@ -21,6 +22,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
+import javax.swing.*;
+import loginpage.LoginForm1;
 
 /**
  *
@@ -29,38 +32,65 @@ import javax.swing.table.*;
 public class RowPopUp extends JPopupMenu {
     
      private JTable table;
-    
+     private Main main;
+     private JMenuItem logout = new JMenuItem("Logout");
    
+  
 
-    public RowPopUp(JTable table) {
+    public RowPopUp() {
         
+        
+        
+       
        //create popup items
-       JMenuItem edit = new JMenuItem("Edit");
-       JMenuItem delete = new JMenuItem("Delete");
+       String username = new String("Full Name"); 
+       String email = new String("email"); 
+       JMenuItem logout = new JMenuItem("Logout");
        
        //when edit clicked
-       edit.addActionListener(new ActionListener() {
+       
+      /*logout.addActionListener(new ActionListener() {
            @Override
            public void actionPerformed(ActionEvent e) {
-              EditMessage msg = new EditMessage(null,true);
-              msg.showAlert();
+              
            }
-       });
+       });*/
        
        //when delete clicked
-       delete.addActionListener(new ActionListener() {
-           @Override
-           public void actionPerformed(ActionEvent e) {
-                JTable table = (JTable)e.getSource();
-               int modelRow = Integer.valueOf( e.getActionCommand() );
-               ((DefaultTableModel)table.getModel()).removeRow(modelRow);
-           }
-       });
+       
       
-       add(edit);
+       add(username);
+       add(email);
        add(new JSeparator());
-       add(delete);
+       add(logout);
+       
+      
+       
+       
     }
+    
+    public void logOut(ActionListener event){
+        
+        String username = new String("Full Name"); 
+       String email = new String("email"); 
+       JMenuItem logout = new JMenuItem("Logout");
+       
+       //when edit clicked
+       
+      logout.addActionListener(event);
+       
+       //when delete clicked
+       
+      
+       add(username);
+       add(email);
+       add(new JSeparator());
+       add(logout);
+        
+        
+        
+    }
+    
     
   
         

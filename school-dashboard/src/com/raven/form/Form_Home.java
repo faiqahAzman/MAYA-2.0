@@ -1,87 +1,94 @@
 package com.raven.form;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.raven.dialog.Message;
 import com.raven.main.Main;
 import com.raven.model.ModelCard;
 import com.raven.model.ModelStudent;
+import com.raven.model.ModelTime;
 import com.raven.swing.Grids;
 import com.raven.swing.TableColorCellRenderer;
 import com.raven.swing.icon.GoogleMaterialDesignIcons;
 import com.raven.swing.icon.IconFontSwing;
 import com.raven.swing.noticeboard.ModelNoticeBoard;
 import com.raven.swing.table.EventAction;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import loginpage.ConnectDatabase;
+import loginpage.LoginForm1;
+import loginpage.WelcomePage;
+
 
 public class Form_Home extends javax.swing.JPanel {
 
     TableColorCellRenderer renderer = new TableColorCellRenderer();
     Grids grid = new Grids();
+    Connection con;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    LoginForm1 lf = new LoginForm1();
+    String output;
+    ModelTime time;
+    
+    
+    
     public Form_Home() {
         initComponents();
-        Grids table1 = new Grids();
+        
         //stable1.fixTable(jScrollPane1);
-        table1.setDefaultRenderer(String.class, renderer);
-        table1.updateCell(1, 1, Color.YELLOW);
+       // table1.setDefaultRenderer(String.class, renderer);
+        //table1.updateCell(1, 1, Color.YELLOW);
+       
         
         setOpaque(false);
         initData();
-        ReadFile();
-        
+        //ReadFile();
+        showData();
+       
         
     }
 
     private void initData() {
         //initCardData();
         initNoticeBoard();
-        initTableData();
+        //initTableData();
     }
     
-   
-    private void initTableData() {
-        EventAction eventAction = new EventAction() {
-            @Override
-            public void delete(ModelStudent student) {
-                if (showMessage("Delete Student : " + student.getName())) {
-                    System.out.println("User click OK");
-                } else {
-                    System.out.println("User click Cancel");
-                }
-            }
+   private void showData() {
+        
+        con = ConnectDatabase.connectdb();
+        
+        
 
-            @Override
-            public void update(ModelStudent student) {
-                if (showMessage("Update Student : " + student.getName())) {
-                    System.out.println("User click OK");
-                } else {
-                    System.out.println("User click Cancel");
-                }
-            }
-        };
-       /* table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("")), "Introduction to Data Science", "Monday", "2:00 - 3:00 pm", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile1.jpg")), "Dara", "Male", "C++", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));
-        table1.addRow(new ModelStudent(new ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg")), "Bora", "Male", "C#", 300).toRowTable(eventAction));*/
+        try {
+            setUserName();
+            setDegree();
+            //showTT();
+        } catch (SQLException ex) {
+            Logger.getLogger(WelcomePage.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        
     }
+    
 
     /*private void initCardData() {
         Icon icon1 = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.PEOPLE, 60, new Color(255, 255, 255, 100), new Color(255, 255, 255, 15));
@@ -107,70 +114,152 @@ public class Form_Home extends javax.swing.JPanel {
         noticeBoard.scrollToTop();
     }
     
-    public void ReadFile() {
-        
-         EventAction eventAction = new EventAction() {
-            @Override
-            public void delete(ModelStudent student) {
-                if (showMessage("Delete Student : " + student.getName())) {
-                    System.out.println("User click OK");
-                } else {
-                    System.out.println("User click Cancel");
-                }
-            }
-
-            @Override
-            public void update(ModelStudent student) {
-                if (showMessage("Update Student : " + student.getName())) {
-                    System.out.println("User click OK");
-                } else {
-                    System.out.println("User click Cancel");
-                }
-            }
-        };
-        
-        
-        String filePath = "C:\\Users\\user\\Desktop\\timetable.txt";
-        File file = new File(filePath);
-        
-        try ( BufferedReader br = new BufferedReader(new FileReader(file))){
-            String firstLine = br.readLine().trim();
-            String[] columnName = firstLine.split(",");
-            DefaultTableModel model = (DefaultTableModel)table1.getModel();
-            
-            model.setColumnIdentifiers(columnName);
-            
-            Object[] tableLines = br.lines().toArray();
-            
-            for (int i = 0; i < tableLines.length; i++) {
-                
-                String line = tableLines[i].toString().trim();
-                String [] dataRow = line.split("/");
-                
-                table1.addRow(dataRow);
-                        
-                
-            }
-            
-            
-            
-            
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-        
-        
-        
-    }
-    
-    
    
+    
+    
+    
+    public void setUserName() throws SQLException {
+        String query = "SELECT fullname FROM logintable WHERE matrix_number = '" + lf.getMatrixNo() + "'";
+        try {
+            ps = con.prepareStatement(query);
+            rs = ps.executeQuery();
+            rs.next();
+            String name = rs.getString("fullname");
+            username.setText(name + " ");
 
-    private boolean showMessage(String message) {
-        Message obj = new Message(Main.getFrames()[0], true);
-        obj.showMessage(message);
-        return obj.isOk();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
     }
+    
+     
+    /*public void setID() throws SQLException {
+        String query = "SELECT matrix_number FROM logintable WHERE matrix_number = '" + lf.getMatrixNo() + "'";
+        try {
+            ps = con.prepareStatement(query);
+            rs = ps.executeQuery();
+            rs.next();
+            String name = rs.getString("matrix_number");
+            id.setText(name + " ");
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }*/
+    
+     /*public void showTT() {
+         
+        
+        
+        String q1 = "SELECT modules,activitytype,day,timestart FROM TIMETABLE_MODULES WHERE MODULES=? AND ACTIVITYTYPE=? AND OCCURENCE=?";
+        try {
+            ps = con.prepareStatement(q1);
+            rs = ps.executeQuery();
+            rs.next();
+           // while (rs.next()) {
+                String DAY = rs.getString("DAY");
+                String MODULES = rs.getString("MODULES");
+                
+                Time TS= rs.getTime("TIMESTART");
+                String ACT = rs.getString("MODULES")+ " " +  rs.getString("ACTIVITYTYPE");
+                //String tbData[] = {MODULES, ACTIVITY};
+               
+                
+                
+                
+                
+                switch(DAY) {
+                    
+                    case "MONDAY":
+                        
+                        table1.setValueAt(TS, 1, 1);
+                        
+                       
+                        
+                        //
+                        
+                        
+                    case "THURSDAY":
+                        
+                        
+                        table1.setValueAt(TS, 3, 4); 
+                        
+                            
+                        
+                         
+                         
+
+                        
+                        //
+                        
+                }
+                
+               // 
+                //jLabel5.setText(output);
+
+                //String tbData[] = {MODULES, CREDIT, ACTIVITY};
+                //DefaultTableModel tblModel = (DefaultTableModel) .getModel();
+
+                //tblModel.addRow(tbData);
+           //}
+            
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }*/
+     
+     private void setDegree() throws SQLException {
+        String query = "SELECT stdnt_type FROM logintable WHERE matrix_number = '" + lf.getMatrixNo() + "'";
+        
+        try {
+            ps = con.prepareStatement(query);
+            rs = ps.executeQuery();
+            rs.next();
+            
+            int STDNT_TYPE = rs.getInt("STDNT_TYPE");
+            //String STDNT_TYPE = rs.getString("stdnt_type");
+   
+           
+           switch(STDNT_TYPE) {
+               
+                   
+                case 1:
+                    output = "Bachelor of Computer Science (Computer Systems Networking)";
+                    break;
+                case 2:
+                    output = "Bachelor of Computer Science (Artificial Intelligence)";
+                    break;
+                case 3:
+                    output = "Bachelor of Computer Science (Information Systems)";
+                    break;
+                case 4:
+                    output = "Bachelor of Computer Science (Software Engineering)";
+                    break;
+                case 5:
+                    output = "Bachelor of Computer Science (Data Science)";
+                    break;
+                case 6:
+                    output = "Bachelor of Computer Science (Multimedia)";
+                    break;
+                   
+                
+                default:
+                    output= "";
+               
+            }
+           
+           
+           
+           id.setText(output);
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    
+    
+    
+       
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -182,11 +271,9 @@ public class Form_Home extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        table1 = new com.raven.swing.table.Table()
-        //original is new com.raven.swing.table.Table()
-        //sort of new is new Grids();
-        {
+        jLabel5 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        table1 = new com.raven.swing.table.TableNew(){
 
             @Override
 
@@ -202,13 +289,11 @@ public class Form_Home extends javax.swing.JPanel {
             }
 
         }
-
         ;
-        jLabel5 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         imageAvatar1 = new com.raven.swing.ImageAvatar();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
+        username = new javax.swing.JLabel();
+        id = new javax.swing.JLabel();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -257,31 +342,42 @@ public class Form_Home extends javax.swing.JPanel {
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setOpaque(false);
 
+        jLabel5.setFont(new java.awt.Font("sansserif", 1, 15)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(76, 76, 76));
+        jLabel5.setText("My Timetable");
+        jLabel5.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
+
         table1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-
+                {"8:00", "", null, null, null, null},
+                {"9:00", null, null, null, null, null},
+                {"10:00", null, null, null, null, null},
+                {"11:00", null, null, null, null, null},
+                {"12:00", null, null, null, null, null},
+                {"13:00", null, null, null, null, null},
+                {"14:00", null, null, null, null, null},
+                {"15:00", null, null, null, null, null},
+                {"16:00", null, null, null, null, null},
+                {"17:00", null, null, null, null, null},
+                {"18:00", null, null, null, null, null}
             },
             new String [] {
-                "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"
+                "", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, true
+                true, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(table1);
+        jScrollPane2.setViewportView(table1);
         if (table1.getColumnModel().getColumnCount() > 0) {
-            table1.getColumnModel().getColumn(0).setPreferredWidth(150);
+            table1.getColumnModel().getColumn(0).setResizable(false);
+            table1.getColumnModel().getColumn(0).setPreferredWidth(50);
         }
-
-        jLabel5.setFont(new java.awt.Font("sansserif", 1, 15)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(76, 76, 76));
-        jLabel5.setText("My Timetable");
-        jLabel5.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -289,33 +385,33 @@ public class Form_Home extends javax.swing.JPanel {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 596, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addComponent(jLabel5)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 587, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 485, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(45, 45, 45))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 478, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(86, 86, 86))
         );
 
         jPanel3.setBackground(new java.awt.Color(58, 83, 155));
 
         imageAvatar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/raven/icon/profile2.jpg"))); // NOI18N
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Student Name");
+        username.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        username.setForeground(new java.awt.Color(255, 255, 255));
+        username.setText("Student Name");
 
-        jLabel6.setBackground(new java.awt.Color(244, 247, 252));
-        jLabel6.setForeground(new java.awt.Color(244, 247, 252));
-        jLabel6.setText("Email");
+        id.setBackground(new java.awt.Color(244, 247, 252));
+        id.setForeground(new java.awt.Color(244, 247, 252));
+        id.setText("Email");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -326,17 +422,17 @@ public class Form_Home extends javax.swing.JPanel {
                 .addComponent(imageAvatar1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel6))
+                    .addComponent(username)
+                    .addComponent(id))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(25, 25, 25)
-                .addComponent(jLabel1)
+                .addComponent(username)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel6)
+                .addComponent(id)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(16, Short.MAX_VALUE)
@@ -374,18 +470,18 @@ public class Form_Home extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel id;
     private com.raven.swing.ImageAvatar imageAvatar1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private com.raven.swing.noticeboard.NoticeBoard noticeBoard;
-    private com.raven.swing.table.Table table1;
+    private com.raven.swing.table.TableNew table1;
+    private javax.swing.JLabel username;
     // End of variables declaration//GEN-END:variables
 }

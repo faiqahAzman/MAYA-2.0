@@ -32,8 +32,8 @@ public class Card extends javax.swing.JPanel {
     public void setData(ModelCard data) {
         DecimalFormat df = new DecimalFormat("#,##0.##");
         lbTitle.setText(data.getTitle());
-        lbValues.setText(data.getDesc());
-        lbIcon.setIcon(data.getIcon());
+        txtarea.setText(data.getDesc());
+        //lbIcon.setIcon(data.getIcon());
         //pro.setValue(data.getPercentage());
         //lbPer.setText(df.format(data.getPercentage()) + "%");
     }
@@ -43,8 +43,7 @@ public class Card extends javax.swing.JPanel {
     private void initComponents() {
 
         lbTitle = new javax.swing.JLabel();
-        lbValues = new javax.swing.JLabel();
-        lbIcon = new javax.swing.JLabel();
+        txtarea = new javax.swing.JTextArea();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setOpaque(false);
@@ -53,11 +52,13 @@ public class Card extends javax.swing.JPanel {
         lbTitle.setForeground(new java.awt.Color(58, 83, 155));
         lbTitle.setText("Title");
 
-        lbValues.setFont(new java.awt.Font("sansserif", 0, 18)); // NOI18N
-        lbValues.setForeground(new java.awt.Color(96, 111, 137));
-        lbValues.setText("Values");
-
-        lbIcon.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        txtarea.setEditable(false);
+        txtarea.setColumns(20);
+        txtarea.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtarea.setRows(5);
+        txtarea.setBorder(null);
+        txtarea.setOpaque(false);
+        txtarea.setRequestFocusEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -67,21 +68,17 @@ public class Card extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lbTitle)
-                    .addComponent(lbValues))
-                .addGap(18, 18, 18)
-                .addComponent(lbIcon, javax.swing.GroupLayout.DEFAULT_SIZE, 657, Short.MAX_VALUE))
+                    .addComponent(txtarea, javax.swing.GroupLayout.PREFERRED_SIZE, 710, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lbTitle)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbValues))
-                    .addComponent(lbIcon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(26, 26, 26))
+                .addComponent(lbTitle)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtarea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -96,8 +93,7 @@ public class Card extends javax.swing.JPanel {
     }*/
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel lbIcon;
     private javax.swing.JLabel lbTitle;
-    private javax.swing.JLabel lbValues;
+    private javax.swing.JTextArea txtarea;
     // End of variables declaration//GEN-END:variables
 }

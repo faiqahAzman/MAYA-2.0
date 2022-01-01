@@ -30,9 +30,10 @@ public class TableNew extends JTable {
             @Override
             public Component getTableCellRendererComponent(JTable jtable, Object o, boolean bln, boolean bln1, int i, int i1) {
                 TableHeader header = new TableHeader(o + "");
-                if (i1 == 4) {
+                /*if (i1 == 4) {
                     header.setHorizontalAlignment(JLabel.CENTER);
-                }
+                }*/
+                header.setHorizontalAlignment(JLabel.CENTER);
                 return header;
             }
         });
@@ -47,9 +48,14 @@ public class TableNew extends JTable {
                     } else {
                         com.setBackground(Color.WHITE);
                     }
+                    
+                    setHorizontalAlignment(JLabel.CENTER);
                     return com;
+                    
+                    
             }
         });
+        
         
     }
         
