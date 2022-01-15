@@ -102,7 +102,7 @@ public class Course_Registered extends javax.swing.JPanel {
         
         showButton();
         getModules();
-        //setCredits(); 
+        setCredits(); 
     }
     
     private void initStaff(){
@@ -279,6 +279,28 @@ public class Course_Registered extends javax.swing.JPanel {
             
         }
     }*/
+    
+    public int setCredits(){
+        int totalcred = 0;
+        try{
+            //Gets all details from REGISTEREDMODULES database with the user's username
+            String getCredit = "SELECT * FROM VALID_MODULES JOIN REGISTEREDMODULES ON REGISTEREDMODULES.username='"+lf.getMatrixNo()+"' AND VALID_MODULES.module= REGISTEREDMODULES.module";
+            ps = con.prepareStatement(getCredit);
+            rs = ps.executeQuery();
+            
+            //Gets the TIMESTART and TIMEEND of the modules
+            while(rs.next()){
+                int cred = Integer.parseInt(rs.getString("CREDIT"));
+                //Getting the cummulative time duration (credit hour) of the modules registered to the student
+                totalcred = totalcred+cred;
+
+                txtCred.setText("TOTAL CREDIT HOUR: "+String.valueOf(totalcred));
+            }
+            } catch(SQLException e){
+            
+        }
+        return totalcred;
+    }
     
    
     

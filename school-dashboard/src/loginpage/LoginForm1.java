@@ -338,7 +338,7 @@ public class LoginForm1 extends javax.swing.JFrame {
         // TODO add your handling code here:
 
 //        RegisterUserPage rup = new RegisterUserPage();
-        RegisterForm rf = new RegisterForm();
+        StudentRegister sr = new StudentRegister();
         dispose();
     }//GEN-LAST:event_registerLinkMouseClicked
 
