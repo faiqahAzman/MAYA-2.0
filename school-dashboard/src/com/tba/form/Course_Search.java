@@ -122,11 +122,11 @@ public class Course_Search extends javax.swing.JPanel {
                 TableModel model = table1.getModel();
 
                 int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
-                String type = model.getValueAt(index, 5).toString();
+                String type = model.getValueAt(index, 2).toString();
                 String modulecode = model.getValueAt(index, 0).toString();
-                String day = model.getValueAt(index, 3).toString();
-                String time1 = model.getValueAt(index, 4).toString();
-                String time2 = model.getValueAt(index, 5).toString();
+                String day = model.getValueAt(index, 5).toString();
+                String time1 = model.getValueAt(index, 6).toString();
+                String time2 = model.getValueAt(index, 7).toString();
                 String username = lf.getMatrixNo();
                 String actual1 = "";
                 
@@ -601,13 +601,14 @@ public class Course_Search extends javax.swing.JPanel {
         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                int index = table1.getSelectedRow();
                 TableModel model = table1.getModel();
-
+              
+                int stdnt = lf.getStudent_type();
                 int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
-                String type = model.getValueAt(index, 5).toString();
+                String type = model.getValueAt(index, 2).toString();
                 String modulecode = model.getValueAt(index, 0).toString();
-                String day = model.getValueAt(index, 3).toString();
-                String time1 = model.getValueAt(index, 4).toString();
-                String time2 = model.getValueAt(index, 5).toString();
+                String day = model.getValueAt(index, 5).toString();
+                String time1 = model.getValueAt(index, 6).toString();
+                String time2 = model.getValueAt(index, 7).toString();
                 String username = lf.getMatrixNo();
                 String actual1 = "";
                 try {
@@ -638,7 +639,7 @@ public class Course_Search extends javax.swing.JPanel {
                     if (Clash) {
                         JOptionPane.showMessageDialog(null, "CLASHES WITH " + activity2 + " FOR " + module2 + " OCCURENCE " + occurence2);
                     } else if (Countrow3.equals("0")) {
-                        String reg = "INSERT INTO APP.REGISTEREDMODULES(USERNAME,MODULE,OCC,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND) SELECT '" + username + "',MODULES,OCCURENCE,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND FROM APP.TIMETABLE_MODULES WHERE OCCURENCE=" + occ + " AND  MODULES='" + modulecode + "'";
+                        String reg = "INSERT INTO APP.REGISTEREDMODULES(USERNAME,MODULE,OCC,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,TYPE) VALUES ('" + username + "','" + modulecode + "'," + occ + ",'" + type + "','" + day + "','" + time1 + "','" + time2 + "'," + stdnt + ")";
                         st = con.createStatement();
                         st.execute(reg);
 

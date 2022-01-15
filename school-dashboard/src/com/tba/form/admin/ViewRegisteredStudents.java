@@ -72,6 +72,7 @@ public class ViewRegisteredStudents extends javax.swing.JPanel {
         if(type.checkType()==0){
            comboPickerLecturer();
            showData();
+           
         }else if(type.checkType()<0) {
             
             
@@ -143,7 +144,7 @@ public class ViewRegisteredStudents extends javax.swing.JPanel {
     }
     
      private void retrieveData() {
-        String q1 = "SELECT * FROM REGISTEREDMODULES";
+        String q1 = "SELECT * FROM REGISTEREDMODULES WHERE TYPE >=1";
         try {
             ps = con.prepareStatement(q1);
             rs = ps.executeQuery();
@@ -189,7 +190,7 @@ public class ViewRegisteredStudents extends javax.swing.JPanel {
     }
       
        private void comboPickerLecturer() {
-          String q1 = "SELECT * FROM ALL_MODULES JOIN LOGINTABLE ON ALL_MODULES.lecturer = '" + lf.getMatrixNo() + "' AND ALL_MODULES.lecturer=LOGINTABLE.FULLNAME";
+          String q1 = "SELECT * FROM TIMETABLE_MODULES JOIN LOGINTABLE ON LOGINTABLE.matrix_number = '" + lf.getMatrixNo() + "' AND TIMETABLE_MODULES.lecturer=LOGINTABLE.FULLNAME" ;
          
           try {
               

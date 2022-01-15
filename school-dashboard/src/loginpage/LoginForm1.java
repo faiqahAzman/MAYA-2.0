@@ -14,6 +14,36 @@ public class LoginForm1 extends javax.swing.JFrame {
     PreparedStatement ps = null;
     ResultSet rs = null;
     static String matrixNo = "PLACEHOLDER";
+    static int student_type;
+    static String matrixNumber;
+    static int muet_band;
+    static int csit;
+
+    public static int getCsit() {
+        return csit;
+    }
+
+    public static void setCsit(int csit) {
+        LoginForm1.csit = csit;
+    }
+
+    public static int getMuet_band() {
+        return muet_band;
+    }
+
+    public static void setMuet_band(int muet_band) {
+        LoginForm1.muet_band = muet_band;
+    }
+    
+  
+
+    public static int getStudent_type() {
+        return student_type;
+    }
+
+    public static void setStudent_type(int student_type) {
+        LoginForm1.student_type = student_type;
+    }
 
     //UI stuff
     public void setMatrixNo(String inputtedMatrixNo) {
@@ -282,6 +312,13 @@ public class LoginForm1 extends javax.swing.JFrame {
             ps.setString(2, String.valueOf(passwordField.getPassword()));
             rs = ps.executeQuery();
             if (rs.next()) {
+                
+                student_type = rs.getInt("STDNT_TYPE");
+                setStudent_type(student_type);
+                muet_band = rs.getInt("MUET_BAND");
+                setMuet_band(muet_band);
+                csit = rs.getInt("CSIT_LOGIN");
+                setCsit(csit);
 //                JOptionPane.showMessageDialog(null, "Login Successful!");
                 String inputtedMatrixNo = matrixNoField.getText();
                 setMatrixNo(inputtedMatrixNo);

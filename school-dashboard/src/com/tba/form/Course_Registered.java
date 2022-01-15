@@ -88,6 +88,7 @@ public class Course_Registered extends javax.swing.JPanel {
         }
         else{
             initStaff();
+            txtCred.setVisible(false);
             
         }
         
@@ -101,7 +102,7 @@ public class Course_Registered extends javax.swing.JPanel {
         
         showButton();
         getModules();
-        setCredits(); 
+        //setCredits(); 
     }
     
     private void initStaff(){
@@ -205,7 +206,7 @@ public class Course_Registered extends javax.swing.JPanel {
      private void getModuleStaff() {
         
         
-        String q1 = "SELECT * FROM TIMETABLE_MODULES JOIN LOGINTABLE ON TIMETABLE_MODULES.lecturer = '" + lf.getMatrixNo() + "' AND TIMETABLE_MODULES.lecturer=LOGINTABLE.FULLNAME" ;
+        String q1 = "SELECT * FROM TIMETABLE_MODULES JOIN LOGINTABLE ON LOGINTABLE.matrix_number = '" + lf.getMatrixNo() + "' AND TIMETABLE_MODULES.lecturer=LOGINTABLE.FULLNAME" ;
         try {
             ps = con.prepareStatement(q1);
             rs = ps.executeQuery();
@@ -253,7 +254,7 @@ public class Course_Registered extends javax.swing.JPanel {
         }
     }
     
-          public void setCredits(){
+        /*  public void setCredits(){
         
         try{
             //Gets all details from REGISTEREDMODULES database with the user's username
@@ -277,7 +278,7 @@ public class Course_Registered extends javax.swing.JPanel {
             } catch(SQLException e){
             
         }
-    }
+    }*/
     
    
     
