@@ -238,7 +238,13 @@ public class Course_Search extends javax.swing.JPanel {
     
      
       private void comboPicker() {
-          String q1 = "SELECT * FROM VALID_MODULES ";
+          
+            
+        int muet = lf.getMuet_band();
+        if(lf.getMuet_band()==6){
+            muet = 5;
+        }
+          String q1 = "SELECT * FROM VALID_MODULES WHERE STUDENTTYPE="+lf.getStudent_type()+" OR STUDENTTYPE=0 AND MUET=0 AND CSIT=0 OR MUET="+muet+" OR CSIT="+lf.getCsit()+"ORDER BY MODULE";
          
           try {
               
@@ -247,7 +253,13 @@ public class Course_Search extends javax.swing.JPanel {
             while (rs.next()) {
                 String MODULES = rs.getString("MODULE");
                 
-                
+                if(MODULES.equals("WIA2001/WIB2001")){
+                  if(lf.getCsit()==1){
+                      MODULES = "WIA2001";
+                  } else if(lf.getCsit()==2){
+                      MODULES = "WIB2001";
+                  }
+                }
 
                 modulebox.addItem(MODULES);
             }
