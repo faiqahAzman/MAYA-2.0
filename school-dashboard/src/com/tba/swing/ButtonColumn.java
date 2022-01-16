@@ -108,7 +108,7 @@ implements TableCellRenderer, TableCellEditor, ActionListener, MouseListener{
 	public Component getTableCellEditorComponent(
 		JTable table, Object value, boolean isSelected, int row, int column)
 	{
-		if (column==10)
+		if (column==9)
 		{
 			editButton.setText( "Add" );
                         editButton.setForeground(new Color(0x4285F4));
@@ -120,7 +120,7 @@ implements TableCellRenderer, TableCellEditor, ActionListener, MouseListener{
 			editButton.setText( "" );
 			editButton.setIcon( (Icon)value );
 		}
-                else if (column==11 || column==4)
+                else if (column==10 || column==4)
 		{
 			editButton.setText( "Delete" );
 			editButton.setForeground(Color.red);
@@ -179,7 +179,7 @@ implements TableCellRenderer, TableCellEditor, ActionListener, MouseListener{
 		}
 
 //		renderButton.setText( (value == null) ? "" : value.toString() );
-		if ( column==10)
+		if ( column==9)
 		{
 			renderButton.setText( "Add" );
                         renderButton.setForeground(new Color(0x4285F4));
@@ -191,7 +191,7 @@ implements TableCellRenderer, TableCellEditor, ActionListener, MouseListener{
 			renderButton.setText( "" );
 			renderButton.setIcon( (Icon)value );
 		}
-                else if (column==11 || column==4)
+                else if (column==10 || column==4)
 		{
 			renderButton.setText( "Delete" );
                         renderButton.setForeground(Color.red);

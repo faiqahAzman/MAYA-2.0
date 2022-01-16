@@ -68,7 +68,7 @@ public class Course_Search extends javax.swing.JPanel {
         sp.getViewport().setOpaque(false);
         sp.setVerticalScrollBar(new ScrollBarCustom());
         sp.setViewportBorder(BorderFactory.createLineBorder(new Color(244,247,252)));
-        comboPicker();
+        //comboPicker();
         showData();
         if(type.checkType()>=1){
            showButton();
@@ -119,7 +119,7 @@ public class Course_Search extends javax.swing.JPanel {
                 //
               
                 //mover.copy_row(); //the selected row will be copied from jTable1 to jTable2
-               /* int index = table1.getSelectedRow();
+               int index = table1.getSelectedRow();
                 TableModel model = table1.getModel();
 
                 int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
@@ -175,9 +175,9 @@ public class Course_Search extends javax.swing.JPanel {
                 } catch (SQLException a) {
                     System.out.println("failed md401");
                     JOptionPane.showMessageDialog(null, e);
-            }*/
+            }
                 
-                checkTime();
+             
                 
               
 
@@ -186,8 +186,8 @@ public class Course_Search extends javax.swing.JPanel {
         
          
 
-       ButtonColumn buttonColumn = new ButtonColumn(table1, add, 10);
-       ButtonColumn buttonColumn2 = new ButtonColumn(table2, delete, 11);
+       ButtonColumn buttonColumn = new ButtonColumn(table1, add, 9);
+       ButtonColumn buttonColumn2 = new ButtonColumn(table2, delete, 10);
        
        
         
@@ -244,9 +244,9 @@ public class Course_Search extends javax.swing.JPanel {
                  String L = rs.getString("LECTURER");
                 String CAP = rs.getString("STUDENTCAP");
                  String ACT = rs.getString("ACTUAL");
-                 String CREDIT = rs.getString("CREDIT");
+                 //String CREDIT = rs.getString("CREDIT");
 
-                String tbData[] = {MODULES, OCC,AC,CREDIT,DAY, TS,TE,L,CAP,ACT};
+                String tbData[] = {MODULES, OCC,AC,DAY, TS,TE,L,CAP,ACT};
                 DefaultTableModel tblModel = (DefaultTableModel) table1.getModel();
 
                 tblModel.addRow(tbData);
@@ -258,7 +258,7 @@ public class Course_Search extends javax.swing.JPanel {
      
     
      
-      private void comboPicker() {
+     /* private void comboPicker() {
           
             
         int muet = lf.getMuet_band();
@@ -291,9 +291,9 @@ public class Course_Search extends javax.swing.JPanel {
           
           
         
-    }
+    }*/
       
-      private void filter(){
+      /*private void filter(){
           
         
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(tblModel);
@@ -327,14 +327,14 @@ public class Course_Search extends javax.swing.JPanel {
                 else
                   filters.set(1,RowFilter.regexFilter(occurencebox.getSelectedItem().toString(),1));
                     //filters.set(1,RowFilter.numberFilter(RowFilter.ComparisonType.EQUAL,occurencebox.getSelectedIndex()));
-                // Apply filters*/
+                // Apply filters
                 
                 sorter.setRowFilter(RowFilter.andFilter(filters));           
             }
         });
         
      
-      }
+      }*/
       
       /*public boolean checkTime() {
         String q1 = "SELECT * FROM APP.REGISTEREDMODULES WHERE USERNAME='" + lf.getMatrixNo() + "'";
@@ -558,8 +558,6 @@ public class Course_Search extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table1 = new com.tba.swing.table.TableNew();
-        modulebox = new javax.swing.JComboBox<>();
-        occurencebox = new javax.swing.JComboBox<>();
         txtSearch = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -599,11 +597,11 @@ public class Course_Search extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Module", "Occ", "Activity ", "Credit", "Day", "Time Start", "Time End", "Lecturer", "Capacity", "Actual", ""
+                "Module", "Occ", "Activity ", "Day", "Time Start", "Time End", "Lecturer", "Capacity", "Actual", ""
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true, false, true, false, true, true
+                false, false, false, false, true, false, true, false, true, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -613,26 +611,16 @@ public class Course_Search extends javax.swing.JPanel {
         jScrollPane1.setViewportView(table1);
         if (table1.getColumnModel().getColumnCount() > 0) {
             table1.getColumnModel().getColumn(1).setPreferredWidth(20);
-            table1.getColumnModel().getColumn(3).setPreferredWidth(20);
-            table1.getColumnModel().getColumn(6).setPreferredWidth(80);
-            table1.getColumnModel().getColumn(7).setPreferredWidth(120);
-            table1.getColumnModel().getColumn(8).setPreferredWidth(30);
+            table1.getColumnModel().getColumn(5).setPreferredWidth(80);
+            table1.getColumnModel().getColumn(6).setPreferredWidth(120);
+            table1.getColumnModel().getColumn(7).setPreferredWidth(30);
         }
 
-        modulebox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                moduleboxItemStateChanged(evt);
-            }
-        });
-        modulebox.addActionListener(new java.awt.event.ActionListener() {
+        txtSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                moduleboxActionPerformed(evt);
+                txtSearchActionPerformed(evt);
             }
         });
-
-        occurencebox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
-
-        txtSearch.setText("jTextField1");
         txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtSearchKeyReleased(evt);
@@ -646,16 +634,9 @@ public class Course_Search extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                            .addGap(11, 11, 11)
-                            .addComponent(modulebox, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(occurencebox, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 998, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 998, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -663,10 +644,7 @@ public class Course_Search extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(modulebox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(occurencebox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 417, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -932,23 +910,46 @@ public class Course_Search extends javax.swing.JPanel {
     
     }//GEN-LAST:event_button1ActionPerformed
 
-    private void moduleboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moduleboxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_moduleboxActionPerformed
-
-    private void moduleboxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_moduleboxItemStateChanged
-        String query = modulebox.getSelectedItem().toString();
-        
-       // filter();
-    }//GEN-LAST:event_moduleboxItemStateChanged
-
     private void txtSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyReleased
-        DefaultTableModel table = (DefaultTableModel)table1.getModel();
-        String search = txtSearch.getText().toUpperCase();
-        TableRowSorter<DefaultTableModel> tr = new TableRowSorter<DefaultTableModel>(table);
-        table1.setRowSorter(tr);
-        tr.setRowFilter(RowFilter.regexFilter(search));
+          tblModel.setRowCount(0);
+        String typedText = txtSearch.getText();
+        String q1 = "SELECT * FROM TIMETABLE_MODULES JOIN LOGINTABLE on LOGINTABLE.matrix_number = '" + lf.getMatrixNo() + "' AND TIMETABLE_MODULES.MODULES LIKE ?";
+        try {
+            ps = con.prepareStatement(q1);
+            ps.setString(1, "%" + typedText.toUpperCase() + "%");
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                String MODULES = rs.getString("MODULES");
+                String DAY = rs.getString("DAY");
+                String OCC = rs.getString("OCCURENCE");
+                String AC = rs.getString("ACTIVITYTYPE");
+                String TE = rs.getString("TIMEEND");
+                 String TS = rs.getString("TIMESTART");
+                 String L = rs.getString("LECTURER");
+                String CAP = rs.getString("STUDENTCAP");
+                 String ACT = rs.getString("ACTUAL");
+                 //String CREDIT = rs.getString("CREDIT");
+
+                String tbData[] = {MODULES, OCC,AC,DAY, TS,TE,L,CAP,ACT};
+
+                
+                
+                
+
+                tblModel.addRow(tbData);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+
+        if (txtSearch.equals("")) {
+            retrieveData();
+        }
     }//GEN-LAST:event_txtSearchKeyReleased
+
+    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSearchActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -960,8 +961,6 @@ public class Course_Search extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JComboBox<String> modulebox;
-    private javax.swing.JComboBox<String> occurencebox;
     private javax.swing.JPanel panel;
     private javax.swing.JScrollPane sp;
     private com.tba.swing.table.TableNew table1;
