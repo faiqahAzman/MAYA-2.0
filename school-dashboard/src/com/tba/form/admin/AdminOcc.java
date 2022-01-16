@@ -5,8 +5,10 @@
 package com.tba.form.admin;
 
 import com.tba.model.ModelStudentType;
+import java.awt.HeadlessException;
 import loginpage.ConnectDatabase;
 import java.sql.*;
+import java.time.LocalTime;
 import javax.swing.JOptionPane;
 
 /**
@@ -21,6 +23,7 @@ public class AdminOcc extends javax.swing.JFrame {
     Connection con = ConnectDatabase.connectdb();
     private ModelStudentType type = new ModelStudentType();
     static int studentNumber = 0;
+    static String activity2 = "", module2 = "", occurence2 = "";
 
     /**
      * Creates new form AdminAddOcc
@@ -35,6 +38,90 @@ public class AdminOcc extends javax.swing.JFrame {
 
     public static void setStudentNumber(int studentNumber) {
         AdminOcc.studentNumber = studentNumber;
+    }
+    
+       public String convert24hours(String time) {
+        if (time.equals("01:00")) {
+            time = "13:00";
+        } else if (time.equals("02:00")) {
+            time = "14:00";
+        } else if (time.equals("03:00")) {
+            time = "15:00";
+        } else if (time.equals("04:00")) {
+            time = "16:00";
+        } else if (time.equals("05:00")) {
+            time = "17:00";
+        } else if (time.equals("06:00")) {
+            time = "18:00";
+        } else if (time.equals("07:00")) {
+            time = "19:00";
+        }
+        return time;
+    }
+    
+    
+    //Check for time conflicts
+    public boolean checkTime(String day, String time1, String time2, String username, int option, int occ) {
+        String q1 = "";
+        if (option == 0) {
+            q1 = "SELECT * FROM APP.REGISTEREDMODULES WHERE USERNAME='" + username + "'";
+        } else if (option == 1) {
+            q1 = "SELECT * FROM APP.TIMETABLE_MODULES WHERE MODULES='" + am.getModuleCode() + "' AND OCCURENCE=" + occ + "";
+        }
+        System.out.println(q1);
+
+        time1 = convert24hours(time1.substring(0, 5));
+        time2 = convert24hours(time2.substring(0, 5));
+
+        LocalTime compareStart = LocalTime.parse(time1.substring(0, 5));
+        LocalTime compareEnd = LocalTime.parse(time2.substring(0, 5));
+
+        System.out.println(compareStart + "\n" + compareEnd);
+
+        try {
+            ps = con.prepareStatement(q1);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+
+                String DAY2 = rs.getString("DAY");
+                String TIMESTART = rs.getString("TIMESTART").substring(0, 5);
+                String TIMEEND = rs.getString("TIMEEND").substring(0, 5);
+                activity2 = rs.getString("ACTIVITYTYPE");
+                if (option == 0) {
+                    module2 = rs.getString("MODULE");
+                    occurence2 = rs.getString("OCC");
+                } else if (option == 1) {
+                    module2 = rs.getString("MODULES");
+                    occurence2 = rs.getString("OCCURENCE");
+                }
+
+                TIMESTART = convert24hours(TIMESTART);
+                TIMEEND = convert24hours(TIMEEND);
+
+                LocalTime targetStart = LocalTime.parse(TIMESTART);
+                LocalTime targetEnd = LocalTime.parse(TIMEEND);
+
+                System.out.println(targetStart + "\n" + targetEnd);
+                System.out.println(day + "\n" + DAY2);
+
+                if (day == null ? DAY2 == null : day.equals(DAY2)) {
+
+                    boolean NoClashClassAfterEnd = (targetStart.isAfter(compareEnd) || targetStart.equals(compareEnd));
+                    boolean NoClashClassBeforeStart = (targetEnd.isBefore(compareStart) || targetEnd.equals(compareStart));
+
+                    if (NoClashClassAfterEnd || NoClashClassBeforeStart) {
+
+                        continue;
+                    } else {
+
+                        return true;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+
+        }
+        return false;
     }
 
     public void setCode() {
@@ -455,7 +542,121 @@ public class AdminOcc extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButtonActionPerformed
-        int edit = am.getEdit();
+          int edit = am.getEdit();
+        String coursecode = am.getModuleCode();
+        String oc = txtOcc.getSelectedItem().toString();
+        String type = txtAct.getSelectedItem().toString();
+        String day = txtDay.getSelectedItem().toString();
+        String time1 = txtTime1.getSelectedItem().toString();
+        String lec = txtLec.getSelectedItem().toString();
+        String time2 = txtTime2.getText();
+        String sfx2 = ampm2.getText();
+        String sfx1 = ampm1.getSelectedItem().toString();
+        String t1 = time1 + " " + sfx1;
+        String t2 = time2 + " " + sfx2;
+        String username = "";
+        int occ = Integer.parseInt(oc);
+        int scap = (Integer) txtSCap.getValue();
+        boolean scap_limit = true;
+
+        if (studentNumber < scap) {
+            scap_limit = false;
+        } else {
+            JOptionPane.showMessageDialog(null, "STUDENT LIMIT IS LOWER THAN REGISTERED STUDENTS!");
+            //reminder.setVisible(true);
+        }
+
+        if (scap_limit == false) {
+            
+            //Getting the username of the lecturer
+            try {
+                String selectUsername = "SELECT MATRIX_NUMBER FROM LOGINTABLE WHERE FULLNAME='" + lec + "'";
+                ps = con.prepareStatement(selectUsername);
+                rs = ps.executeQuery();
+                rs.next();
+                username = rs.getString("MATRIX_NUMBER");
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+            
+            //Inserting edited/new modules
+            try {
+                
+                String InsertModule = "INSERT INTO APP.timetable_modules(MODULES,OCCURENCE,DAY,TIMESTART,TIMEEND,ACTIVITYTYPE,LECTURER,STUDENTCAP,ACTUAL)VALUES('" + am.getModuleCode() + "'," + am.getEOcc() + ",'" + am.getEDay() + "','" + am.getETime1() + "','" + am.getETime2() + "','" + am.getEType() + "','" + am.getELec() + "'," + am.getECap() + ","+ am.getEActual()+")";
+                String InsertLecturer = "INSERT INTO REGISTEREDMODULES(USERNAME,MODULE,OCC,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,TYPE)VALUES('" + username + "','" + coursecode + "'," + occ + ",'" + type + "','" + day + "','" + t1 + "','" + t2 + "'," + 0 + ")";
+                String checkDuplicate = "SELECT COUNT(*) FROM app.timetable_modules where occurence=" + occ + " and activitytype='" + type + "' and modules='" + am.getModuleCode() + "'";
+                String deleteModule = "DELETE FROM app.timetable_modules WHERE modules ='" + am.getModuleCode() + "' and occurence =" + am.getEOcc() + " and activitytype ='" + am.getEType() + "'";
+                String deleteLecturer = "DELETE FROM app.REGISTEREDMODULES WHERE module ='" + am.getModuleCode() + "' and occ =" + am.getEOcc() + " and activitytype ='" + am.getEType() + "' and type=0";
+                
+                
+                Statement st;
+                st = con.createStatement();
+                
+                //Deleting the occurrence and lecturer from the module which is to be edited
+                if (edit == 1) {
+                    try {
+                        PreparedStatement set1 = con.prepareStatement(deleteModule);
+                        set1.executeUpdate();
+                        PreparedStatement set2 = con.prepareStatement(deleteLecturer);
+                        set2.executeUpdate();
+                    } catch (SQLException e) {
+                        JOptionPane.showMessageDialog(null, e);
+                    }
+                }
+                
+                //Checking for time conflicts 
+                boolean lecturerClash = checkTime(day, t1, t2, username, 0, occ);
+                boolean occurrenceClash = checkTime(day, t1, t2, username, 1, occ);
+
+                ResultSet rs1 = st.executeQuery(checkDuplicate);
+                rs1.next();
+                String duplicateRows = rs1.getString(1);
+                
+                //If time clashes with lecturer's timetable
+                if (lecturerClash) {
+                    JOptionPane.showMessageDialog(null, "CLASHES WITH " + lec + "'s CLASS: " + activity2 + " FOR " + module2 + " OCCURRENCE " + occurence2);
+                    if (edit == 1) {
+                        st.execute(InsertModule);
+                        st.execute(InsertLecturer);
+                    }
+                }
+                //If time clashes with another activity type of the same occurrence
+                else if (occurrenceClash) {
+                    JOptionPane.showMessageDialog(null, "CLASHES WITH THE " + activity2 + " FOR " + module2 + " OCCURRENCE " + occurence2);
+                    if (edit == 1) {
+                        st.execute(InsertModule);
+                        st.execute(InsertLecturer);
+                    }
+                }
+                //Checking for duplicate modules
+                else if (duplicateRows.equals("0")) {
+                    String registerLecturer = "INSERT INTO REGISTEREDMODULES(USERNAME,MODULE,OCC,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,TYPE)VALUES('" + username + "','" + coursecode + "'," + occ + ",'" + type + "','" + day + "','" + t1 + "','" + t2 + "'," + 0 + ")";
+                    String registerModule = "INSERT INTO APP.timetable_modules(MODULES,OCCURENCE,DAY,TIMESTART,TIMEEND,ACTIVITYTYPE,LECTURER,STUDENTCAP,ACTUAL)VALUES('" + coursecode + "'," + occ + ",'" + day + "','" + t1 + "','" + t2 + "','" + type + "','" + lec + "'," + scap + ","+ am.getEActual()+")";
+                    
+                    st.execute(registerLecturer);
+                    st.execute(registerModule);
+
+                    if (edit == 1) {
+                        JOptionPane.showMessageDialog(this, "Module Updated");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Module Added");
+                    }
+                    
+                } 
+                else {
+                    JOptionPane.showMessageDialog(this, "Module already exists!");
+                    //Insert the original module and lecturer if edit fails.
+                    if (edit == 1) {
+                        st.execute(InsertModule);
+                        st.execute(InsertLecturer);
+                    }
+                }
+
+            } catch (HeadlessException | SQLException e) {
+                JOptionPane.showMessageDialog(this, "Failed to Add Course");
+            }
+        
+        /*int edit = am.getEdit();
         String coursecode = am.getModuleCode();
         String oc = txtOcc.getSelectedItem().toString();
         String type = txtAct.getSelectedItem().toString();
@@ -586,11 +787,12 @@ public class AdminOcc extends javax.swing.JFrame {
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Failed to Add Course");
             }
-        }
+        }*/
 
         //update occTable?
 //        new modulesDetail().setVisible(true);
         this.dispose();
+        }
     }//GEN-LAST:event_submitButtonActionPerformed
 
     private void txtActActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtActActionPerformed

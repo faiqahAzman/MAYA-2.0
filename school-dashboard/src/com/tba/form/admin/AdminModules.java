@@ -33,8 +33,9 @@ public class AdminModules extends javax.swing.JPanel {
     static String act = "";
     static int hours = -1;
     //e for edit
-    static int occ = -1; static String type=""; static String eday =""; 
-    static String etime =""; static String elec =""; static int ecap =-1; static int edit =0;
+    static int occ = -1, ecap = -1, edit = 0, actual = 0;
+    static String type=""; static String eday =""; 
+    static String etime =""; static String elec =""; 
     static String etime1 = ""; static String etime2="";
 
     public AdminModules() {
@@ -519,13 +520,16 @@ public class AdminModules extends javax.swing.JPanel {
                 int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
                 int scap = Integer.parseInt(model.getValueAt(index, 7).toString());
                 int edit = 1;
+                int actual = Integer.parseInt(model.getValueAt(index, 8).toString());
                 String typ = model.getValueAt(index, 5).toString();
                 String day = model.getValueAt(index, 2).toString();
                 String time1 = model.getValueAt(index, 3).toString();
                 String time2 = model.getValueAt(index, 3).toString();
                 String time = time1.substring(0,5);
+                
+                String lec = model.getValueAt(index, 6).toString();
                 //String lec = model.getValueAt(index, 6).toString();
-                setEdit(occ,scap,typ,day,time,edit,time1,time2);
+                setEdit(occ, scap, typ, day, time, edit, time1, time2, lec, actual);
                 as.editMod(); //sends details on selected module to addModules Form
                 as.setVisible(true);
 
@@ -624,12 +628,12 @@ public class AdminModules extends javax.swing.JPanel {
 
     }
     
-    public void setEdit(int occ,int scap,String type,String day,String time,int edit,String time1,String time2){
+   /* public void setEdit(int occ,int scap,String type,String day,String time,int edit,String time1,String time2){
         this.occ = occ;
         this.type = type;
         this.eday = day;    //e for edit
         this.etime = time;
-        //this.elec = lec;
+        this.elec = lec;
         this.ecap = scap;
         this.edit = edit;
         this.etime1 = time1;
@@ -660,6 +664,60 @@ public class AdminModules extends javax.swing.JPanel {
         return ecap;
     }
     public int getEdit(){
+        return edit;
+    }*/
+    
+     //Method to set the values of the data with details from the module
+    public void setEdit(int occ, int scap, String type, String day, String time, int edit, String time1, String time2, String lec, int actual) {
+        this.occ = occ;
+        this.type = type;
+        this.eday = day;
+        this.etime = time;
+        this.ecap = scap;
+        this.edit = edit;
+        this.etime1 = time1;
+        this.etime2 = time2;
+        this.elec = lec;
+        this.actual = actual;
+    }
+
+    public int getEOcc() {
+        return occ;
+    }
+
+    public int getEActual() {
+        return actual;
+    }
+
+    public String getEType() {
+        return type;
+    }
+
+    public String getEDay() {
+        return eday;
+    }
+
+    public String getETime() {
+        return etime;
+    }
+
+    public String getETime1() {
+        return etime1;
+    }
+
+    public String getETime2() {
+        return etime2;
+    }
+
+    public String getELec() {
+        return elec;
+    }
+
+    public int getECap() {
+        return ecap;
+    }
+
+    public int getEdit() {
         return edit;
     }
 
