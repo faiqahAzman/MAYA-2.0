@@ -37,6 +37,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractCellEditor;
 import javax.swing.Action;
@@ -50,11 +51,13 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import loginpage.ConnectDatabase;
 import loginpage.LoginForm1;
 
@@ -82,6 +85,7 @@ public class Course_Registered extends javax.swing.JPanel {
         initComponents();
         setVisible(true);
         setOpaque(false);
+        comboPicker();
         
         table1.fixTable(jScrollPane1);
         tblModel = (DefaultTableModel) table1.getModel();
@@ -108,6 +112,7 @@ public class Course_Registered extends javax.swing.JPanel {
         showButton();
         getModules();
         setCredits(); 
+        
     }
     
     private void initStaff(){
@@ -339,6 +344,82 @@ public class Course_Registered extends javax.swing.JPanel {
         return totalcred;
     }
     
+    private void comboPicker() {
+          
+            
+        
+          String q1 = "SELECT * FROM REGISTEREDMODULES WHERE REGISTEREDMODULES.username = '" + lf.getMatrixNo() + "'";
+         
+          try {
+              
+            ps = con.prepareStatement(q1);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                String MODULES = rs.getString("MODULE");
+                
+                if(MODULES.equals("WIA2001/WIB2001")){
+                  if(lf.getCsit()==1){
+                      MODULES = "WIA2001";
+                  } else if(lf.getCsit()==2){
+                      MODULES = "WIB2001";
+                  }
+                }
+                
+
+                modulebox.addItem(MODULES);
+            }
+              
+          } catch (Exception e) {
+              JOptionPane.showMessageDialog(null, e);
+          }
+          
+          
+        
+    }
+    
+    private void filter(){
+          
+        
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(tblModel);
+          table1.setRowSorter(sorter);
+         List<RowFilter<DefaultTableModel, Object>> filters = new ArrayList<>();
+         
+         
+
+        modulebox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                if(filters.isEmpty())
+                    filters.add(RowFilter.regexFilter(modulebox.getSelectedItem().toString()));
+                else
+                    filters.set(0, RowFilter.regexFilter(modulebox.getSelectedItem().toString()));
+                // Apply filters
+                sorter.setRowFilter(RowFilter.andFilter(filters));
+            }
+        });
+
+        
+        
+        
+        occbox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                
+                
+                if(filters.size() < 2)
+                   filters.add(RowFilter.regexFilter(occbox.getSelectedItem().toString(),1));
+                    
+                   
+                else
+                  filters.set(1,RowFilter.regexFilter(occbox.getSelectedItem().toString(),1));
+                    //filters.set(1,RowFilter.numberFilter(RowFilter.ComparisonType.EQUAL,occurencebox.getSelectedIndex()));
+                // Apply filters
+                
+                sorter.setRowFilter(RowFilter.andFilter(filters));           
+            }
+        });
+        
+     
+      }
+    
    
     
     
@@ -363,8 +444,9 @@ public class Course_Registered extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table1 = new com.tba.swing.table.TableNew();
-        searchbar = new javax.swing.JTextField();
         txtCred = new javax.swing.JLabel();
+        modulebox = new javax.swing.JComboBox<>();
+        occbox = new javax.swing.JComboBox<>();
 
         jPanel1.setOpaque(false);
 
@@ -396,23 +478,17 @@ public class Course_Registered extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(table1);
 
-        searchbar.setBackground(new java.awt.Color(218, 225, 236));
-        searchbar.setForeground(new java.awt.Color(46, 59, 82));
-        searchbar.setText("   Search");
-        searchbar.setBorder(null);
-        searchbar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchbarActionPerformed(evt);
-            }
-        });
-        searchbar.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                searchbarKeyReleased(evt);
+        txtCred.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
+        txtCred.setText("TOTAL CREDIT HOUR:");
+
+        modulebox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " " }));
+        modulebox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                moduleboxItemStateChanged(evt);
             }
         });
 
-        txtCred.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
-        txtCred.setText("TOTAL CREDIT HOUR:");
+        occbox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4" }));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -421,27 +497,29 @@ public class Course_Registered extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1021, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(searchbar, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1019, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(txtCred, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel1)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(modulebox, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(occbox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(txtCred, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jLabel1)
-                .addGap(14, 14, 14)
-                .addComponent(searchbar, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
+                .addGap(17, 17, 17)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(modulebox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(occbox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(16, 16, 16)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(txtCred)
@@ -466,46 +544,16 @@ public class Course_Registered extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void searchbarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchbarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_searchbarActionPerformed
-
-    private void searchbarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchbarKeyReleased
-          tblModel.setRowCount(0);
-        String typedText = searchbar.getText();
-        String q1 = "SELECT * FROM REGISTEREDMODULES WHERE username = '" + lf.getMatrixNo() + "' AND MODULE LIKE ?";
-        try {
-            ps = con.prepareStatement(q1);
-            ps.setString(1, "%" + typedText.toUpperCase() + "%");
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                String MODULES = rs.getString("MODULE");
-                String OCC = rs.getString("OCC");
-                String ACTIVITY = rs.getString("ACTIVITYTYPE");
-                String DAY = rs.getString("DAY");
-                String TS = rs.getString("TIMESTART");
-                String TE = rs.getString("TIMEEND");
-
-                
-                String tbData[] = {MODULES, OCC, ACTIVITY,DAY, TS,TE};
-                
-
-                tblModel.addRow(tbData);
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e);
-        }
-
-        if (searchbar.equals("")) {
-            getModules();
-        }
-    }//GEN-LAST:event_searchbarKeyReleased
+    private void moduleboxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_moduleboxItemStateChanged
+        filter();
+    }//GEN-LAST:event_moduleboxItemStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField searchbar;
+    private javax.swing.JComboBox<String> modulebox;
+    private javax.swing.JComboBox<String> occbox;
     private com.tba.swing.table.TableNew table1;
     private javax.swing.JLabel txtCred;
     // End of variables declaration//GEN-END:variables
