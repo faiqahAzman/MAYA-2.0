@@ -126,7 +126,7 @@ implements TableCellRenderer, TableCellEditor, ActionListener, MouseListener{
 			editButton.setForeground(Color.red);
                         
 		}
-                else if (column==6)
+                else if (column==8)
 		{
 			editButton.setText( "Edit" );
                         editButton.setForeground(new Color(0x4285F4));
@@ -198,7 +198,7 @@ implements TableCellRenderer, TableCellEditor, ActionListener, MouseListener{
 			//editButton.setIcon( (Icon)value );
                         
 		}
-                else if (column==6)
+                else if (column==8)
 		{
 			renderButton.setText( "Edit" );
                         renderButton.setForeground(new Color(0x4285F4));

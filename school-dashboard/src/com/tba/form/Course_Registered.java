@@ -176,7 +176,7 @@ public class Course_Registered extends javax.swing.JPanel {
                 //table.setValueAt(newTG, selectedRowIndex, 3);
                 
                    
-                       int scap = Integer.parseInt((String) table.getValueAt(selectedRowIndex, 4));
+                       int scap = Integer.parseInt((String) table.getValueAt(selectedRowIndex, 6));
                        boolean scap_limit = true;
                        
                        if (newTG <scap ) {
@@ -184,7 +184,7 @@ public class Course_Registered extends javax.swing.JPanel {
                           JOptionPane.showMessageDialog(null, "STUDENT LIMIT IS LOWER THAN REIGSTERED STUDENTS!");
                        }else {
                             updateTG(newTG);
-                           table.setValueAt(newTG, selectedRowIndex, 4);
+                           table.setValueAt(newTG, selectedRowIndex, 6);
                        
         }
                         
