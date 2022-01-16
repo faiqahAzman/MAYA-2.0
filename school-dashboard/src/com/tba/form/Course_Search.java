@@ -176,7 +176,8 @@ public class Course_Search extends javax.swing.JPanel {
                     System.out.println("failed md401");
                     JOptionPane.showMessageDialog(null, e);
             }
-                
+              
+               
              
                 
               
@@ -350,19 +351,22 @@ public class Course_Search extends javax.swing.JPanel {
      
       }*/
       
-      /*public boolean checkTime() {
+      public boolean checkTime() {
         String q1 = "SELECT * FROM APP.REGISTEREDMODULES WHERE USERNAME='" + lf.getMatrixNo() + "'";
 
         int index = table1.getSelectedRow();
         TableModel model = table1.getModel();
 
-        String day = model.getValueAt(index, 4).toString();
-        String time1 = model.getValueAt(index, 5).toString();
-        String time2 = model.getValueAt(index, 6).toString();
+        String day = model.getValueAt(index, 3).toString();
+        String time1 = model.getValueAt(index, 4).toString();
+        String time2 = model.getValueAt(index, 5).toString();
+        String modules = model.getValueAt(index, 0).toString();
 
         //LocalTime compareStart = LocalTime.parse(time1.substring(0, 5));
         LocalTime compareStart = LocalTime.parse(time1.substring(0, 5));
         LocalTime compareEnd = LocalTime.parse(time2.substring(0, 5));
+        
+        System.out.println(modules +" "+day + " " + time1 + " " + time2);
 
         try {
             ps = con.prepareStatement(q1);
@@ -397,9 +401,9 @@ public class Course_Search extends javax.swing.JPanel {
 
         }
         return false;
-    }*/
+    }
       
-       public boolean checkTime() {
+      /* public boolean checkTime() {
         //SQL command to get all details from REGISTEREDMODULES database with the user's username/matrix number.
        
         String q1 = "SELECT * FROM APP.REGISTEREDMODULES WHERE USERNAME='" + lf.getMatrixNo() + "'";
@@ -408,8 +412,10 @@ public class Course_Search extends javax.swing.JPanel {
         int index = table1.getSelectedRow();
         int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
         String modulecode = (String) model.getValueAt(index, 0);
-        String time1 = "";
-        String time2 = "";
+        String time1 = model.getValueAt(index, 4).toString();
+        String time2 = model.getValueAt(index, 5).toString();
+        //String time1 = "";
+        //String time2 = "";
         String day = "";
         
         try {
@@ -429,7 +435,7 @@ public class Course_Search extends javax.swing.JPanel {
                 System.out.println(modules+" "+day + " " + time1 + " " + time2);
             }
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
 
         LocalTime compareStart = LocalTime.parse(time1.substring(0, 5));
@@ -468,10 +474,11 @@ public class Course_Search extends javax.swing.JPanel {
                 }
             }
         } catch (SQLException e) {
+            System.out.println(e.getMessage());
 
         }
         return false;
-    }
+    }*/
       
        //Method to check for the module's time conflicts with the user's timetable
    /* public boolean checkTime() {
@@ -650,9 +657,11 @@ public class Course_Search extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 998, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 998, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(

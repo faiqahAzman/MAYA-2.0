@@ -103,18 +103,30 @@
             <Component class="com.tba.swing.table.TableNew" name="table1">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="7" rowCount="0">
+                  <Table columnCount="9" rowCount="0">
                     <Column editable="true" title="Modules" type="java.lang.Object"/>
                     <Column editable="true" title="Occurence" type="java.lang.Object"/>
                     <Column editable="true" title="Activity" type="java.lang.Object"/>
                     <Column editable="true" title="Day" type="java.lang.Object"/>
                     <Column editable="false" title="Time Start" type="java.lang.Integer"/>
                     <Column editable="false" title="Time End" type="java.lang.Integer"/>
+                    <Column editable="true" title="Capacity" type="java.lang.Object"/>
+                    <Column editable="true" title="Actual" type="java.lang.Object"/>
                     <Column editable="true" title="" type="java.lang.Object"/>
                   </Table>
                 </Property>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                   <TableColumnModel selectionModel="0">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
                     <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                       <Title/>
                       <Editor/>

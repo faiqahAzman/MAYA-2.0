@@ -212,7 +212,7 @@ public class Course_Registered extends javax.swing.JPanel {
         };
        
         if(type.checkType()== 0){
-        ButtonColumn buttonColumn2 = new ButtonColumn(table1, edit, 6);
+        ButtonColumn buttonColumn2 = new ButtonColumn(table1, edit, 8);
         }
         
     }
@@ -221,6 +221,7 @@ public class Course_Registered extends javax.swing.JPanel {
         
         
         String q1 = "SELECT * FROM REGISTEREDMODULES WHERE username = '" + lf.getMatrixNo() + "'";
+        // String q1 = "SELECT * FROM TIMETABLE_MODULES JOIN REGISTEREDMODULES ON REGISTEREDMODULES.username = '" + lf.getMatrixNo() + "'WHERE REGISTEREDMODULES.MODULE = TIMETABLE_MODULES.MODULES";
         try {
             ps = con.prepareStatement(q1);
             rs = ps.executeQuery();
@@ -231,6 +232,7 @@ public class Course_Registered extends javax.swing.JPanel {
                 String DAY = rs.getString("DAY");
                 String TS = rs.getString("TIMESTART");
                 String TE = rs.getString("TIMEEND");
+                
                 
               
 
@@ -257,11 +259,13 @@ public class Course_Registered extends javax.swing.JPanel {
                 String OCC = rs.getString("OCCURENCE");
                 String ACTIVITY = rs.getString("ACTIVITYTYPE");
                 String DAY = rs.getString("DAY");
+                 String TS = rs.getString("TIMESTART");
+                String TE = rs.getString("TIMEEND");
                 String SC = rs.getString("STUDENTCAP");
                 String AC = rs.getString("ACTUAL");
 
                 
-                String tbData[] = {MODULES, OCC, ACTIVITY,DAY, SC,AC};
+                String tbData[] = {MODULES, OCC, ACTIVITY,DAY,TS,TE, SC,AC};
                 DefaultTableModel tblModel = (DefaultTableModel) table1.getModel();
 
                 tblModel.addRow(tbData);
@@ -458,14 +462,14 @@ public class Course_Registered extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Modules", "Occurence", "Activity", "Day", "Time Start", "Time End", ""
+                "Modules", "Occurence", "Activity", "Day", "Time Start", "Time End", "Capacity", "Actual", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Object.class
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                true, true, true, true, false, false, true
+                true, true, true, true, false, false, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
