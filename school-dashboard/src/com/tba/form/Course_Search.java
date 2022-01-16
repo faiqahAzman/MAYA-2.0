@@ -119,7 +119,7 @@ public class Course_Search extends javax.swing.JPanel {
                 //
               
                 //mover.copy_row(); //the selected row will be copied from jTable1 to jTable2
-               int index = table1.getSelectedRow();
+              /* int index = table1.getSelectedRow();
                 TableModel model = table1.getModel();
 
                 int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
@@ -179,6 +179,80 @@ public class Course_Search extends javax.swing.JPanel {
                 } catch (SQLException a) {
                     System.out.println("failed md401");
                     JOptionPane.showMessageDialog(null, e);
+            }*/
+                
+                int index = table1.getSelectedRow();
+            TableModel model = table1.getModel();
+
+            int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
+            String type = model.getValueAt(index, 2).toString();
+            String modulecode = model.getValueAt(index, 0).toString();
+            String day = model.getValueAt(index, 4).toString();
+            String time1 = model.getValueAt(index, 5).toString();
+            String time2 = model.getValueAt(index, 6).toString();
+            String username = lf.getMatrixNo();
+            String actual1 = "";
+
+            //If the module code is either WIA2001 or WIB2001, register the module under the code = WIA2001/WIB2001.
+            if (modulecode.equals("WIA2001") || modulecode.equals("WIB2001")) {
+                modulecode = "WIA2001/WIB2001";
+            }
+
+            try {
+                Statement st;
+                st = con.createStatement();
+
+                //Check the amount of students already registered to the selected module
+                String checkCap = "SELECT COUNT(*) FROM app.REGISTEREDMODULES where module='" + modulecode + "' and OCC=" + occ + " and ACTIVITYTYPE='" + type + "' and TYPE=1";
+                ResultSet rs3 = st.executeQuery(checkCap);
+                rs3.next();
+                actual1 = rs3.getString(1);
+                System.out.println(actual1);
+
+            } catch (SQLException ae) {
+                System.out.println("failed md484 " + ae);
+            }
+
+            try {
+                Statement st;
+                st = con.createStatement();
+
+                //SQL command to find number of rows with the same module.
+                String checkDuplicates = "SELECT COUNT(*) FROM app.REGISTEREDMODULES where module='" + modulecode + "' and USERNAME='" + username + "' and type=1";
+                ResultSet rs3 = st.executeQuery(checkDuplicates);
+                rs3.next();
+                String duplicatedRows = rs3.getString(1);
+                System.out.println(duplicatedRows);
+
+                boolean Clash = checkTime();
+
+                //Check for duplicates modules
+                if (duplicatedRows.equals("0")) {
+                    //Check for time conflicts with student's timetable
+                    if (Clash) {
+                        JOptionPane.showMessageDialog(null, "CLASHES WITH " + activity2 + " FOR " + module2 + " OCCURENCE " + occurence2);
+                    } else if(cr.getCredithour()>22){
+                        JOptionPane.showMessageDialog(null, "CREDIT EXCEEDED 22 HOURS");
+                    }
+                    //Registers the module to the student's timetable.
+                    else {
+                        
+                         mover.copy_row();
+                       /* int actual = Integer.parseInt(actual1) + 1;
+
+                        String registerModule = "INSERT INTO APP.REGISTEREDMODULES(USERNAME,MODULE,OCC,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,TYPE) SELECT '" + username + "',MODULES,OCCURENCE,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,1 FROM APP.TIMETABLE_MODULES WHERE OCCURENCE=" + occ + " AND  MODULES='" + modulecode + "'";
+                        String setActual = "UPDATE APP.TIMETABLE_MODULES SET ACTUAL=" + actual + " WHERE MODULES='" + modulecode + "' AND OCCURENCE=" + occ + "";
+
+                        st.execute(registerModule);
+                        st.execute(setActual);*/
+
+                        //JOptionPane.showMessageDialog(null, "MODULE REGISTERED");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "MODULE ALREADY REGISTERED");
+                }
+            } catch (SQLException a) {
+                JOptionPane.showMessageDialog(null, a);
             }
               
                
@@ -796,8 +870,28 @@ public class Course_Search extends javax.swing.JPanel {
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
         if (JOptionPane.showConfirmDialog(null, "Register the selected modules?", "WARNING",
         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-            
-            int index = table1.getSelectedRow();
+        try{
+
+            int rows=table2.getRowCount();
+
+            for(int row = 0; row<rows; row++)
+            {   
+              String qty = (String)table2.getValueAt(row, 0);
+              //Integer unitprice = (Integer) table2.getValueAt(row, 1);
+              String description = (String)table2.getValueAt(row, 2);
+              String total = (String)table2.getValueAt(row, 3);
+              String queryco = "Insert into registeredmodules(module,activitytype,day) values ('"+qty+"','"+description+"','"+total+"')";
+
+              ps= con.prepareStatement(queryco);
+              ps.execute();     
+            }
+            JOptionPane.showMessageDialog(null, "Successfully Save");
+          }
+          catch(Exception e){
+            JOptionPane.showMessageDialog(this,e.getMessage());
+          }
+   
+        /*int index = table1.getSelectedRow();
         TableModel model = table1.getModel();
 
         int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
@@ -867,7 +961,7 @@ public class Course_Search extends javax.swing.JPanel {
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e);
-        }
+        }*/
                /*int index = table1.getSelectedRow();
                 TableModel model = table1.getModel();
               
