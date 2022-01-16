@@ -238,13 +238,13 @@ public class Course_Search extends javax.swing.JPanel {
                     else {
                         
                          mover.copy_row();
-                       /* int actual = Integer.parseInt(actual1) + 1;
+                        int actual = Integer.parseInt(actual1) + 1;
 
-                        String registerModule = "INSERT INTO APP.REGISTEREDMODULES(USERNAME,MODULE,OCC,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,TYPE) SELECT '" + username + "',MODULES,OCCURENCE,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,1 FROM APP.TIMETABLE_MODULES WHERE OCCURENCE=" + occ + " AND  MODULES='" + modulecode + "'";
+                        //String registerModule = "INSERT INTO APP.REGISTEREDMODULES(USERNAME,MODULE,OCC,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,TYPE) SELECT '" + username + "',MODULES,OCCURENCE,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,1 FROM APP.TIMETABLE_MODULES WHERE OCCURENCE=" + occ + " AND  MODULES='" + modulecode + "'";
                         String setActual = "UPDATE APP.TIMETABLE_MODULES SET ACTUAL=" + actual + " WHERE MODULES='" + modulecode + "' AND OCCURENCE=" + occ + "";
 
-                        st.execute(registerModule);
-                        st.execute(setActual);*/
+                        //st.execute(registerModule);
+                        st.execute(setActual);
 
                         //JOptionPane.showMessageDialog(null, "MODULE REGISTERED");
                     }
@@ -871,16 +871,27 @@ public class Course_Search extends javax.swing.JPanel {
         if (JOptionPane.showConfirmDialog(null, "Register the selected modules?", "WARNING",
         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
         try{
+            
+            
 
             int rows=table2.getRowCount();
 
             for(int row = 0; row<rows; row++)
             {   
-              String qty = (String)table2.getValueAt(row, 0);
+              int occ = Integer.parseInt(table2.getValueAt(row, 1).toString());
+                String type = table2.getValueAt(row, 2).toString();
+                String modulecode = table2.getValueAt(row, 0).toString();
+                String day = table2.getValueAt(row, 3).toString();
+                String time1 = table2.getValueAt(row, 4).toString();
+                String time2 = table2.getValueAt(row, 5).toString();
+                String username = lf.getMatrixNo();
+                String actual1 = "";  
+              //String qty = (String)table2.getValueAt(row, 0);
+              
               //Integer unitprice = (Integer) table2.getValueAt(row, 1);
-              String description = (String)table2.getValueAt(row, 2);
-              String total = (String)table2.getValueAt(row, 3);
-              String queryco = "Insert into registeredmodules(module,activitytype,day) values ('"+qty+"','"+description+"','"+total+"')";
+              /*String description = (String)table2.getValueAt(row, 2);
+              String total = (String)table2.getValueAt(row, 3);*/
+              String queryco = "Insert into registeredmodules(USERNAME,MODULE,OCC,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,TYPE) values ('"+username+"','"+modulecode+"',"+occ+",'"+type+"','"+day+"','"+time1+"','"+time2+"',"+1+")";
 
               ps= con.prepareStatement(queryco);
               ps.execute();     
