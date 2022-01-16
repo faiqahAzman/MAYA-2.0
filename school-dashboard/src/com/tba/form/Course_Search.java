@@ -207,6 +207,24 @@ public class Course_Search extends javax.swing.JPanel {
 
         
     }
+      public String convert24hours(String time) {
+        if (time.equals("01:00")) {
+            time = "13:00";
+        } else if (time.equals("02:00")) {
+            time = "14:00";
+        } else if (time.equals("03:00")) {
+            time = "15:00";
+        } else if (time.equals("04:00")) {
+            time = "16:00";
+        } else if (time.equals("05:00")) {
+            time = "17:00";
+        } else if (time.equals("06:00")) {
+            time = "18:00";
+        } else if (time.equals("07:00")) {
+            time = "19:00";
+        }
+        return time;
+    }
     
      private void retrieveData() {
         String q1 = "SELECT * FROM TIMETABLE_MODULES JOIN VALID_MODULES ON TIMETABLE_MODULES.MODULES = VALID_MODULES.MODULE";
@@ -315,7 +333,7 @@ public class Course_Search extends javax.swing.JPanel {
      
       }
       
-       public boolean checkTime() {
+      /* public boolean checkTime() {
         String q1 = "SELECT * FROM APP.REGISTEREDMODULES WHERE USERNAME='" + lf.getMatrixNo() + "'";
 
         int index = table1.getSelectedRow();
@@ -340,6 +358,77 @@ public class Course_Search extends javax.swing.JPanel {
                 activity2 = rs.getString("ACTIVITYTYPE");
                 module2 = rs.getString("MODULE");
                 occurence2 = rs.getString("OCC");
+
+                LocalTime targetStart = LocalTime.parse(TIMESTART.substring(0, 5));
+                LocalTime targetEnd = LocalTime.parse(TIMEEND.substring(0, 5));
+
+                if (day == null ? DAY2 == null : day.equals(DAY2)) {
+
+                    boolean NoClashClassAfterEnd = (targetStart.isAfter(compareEnd) || targetStart.equals(compareEnd));
+                    boolean NoClashClassBeforeStart = (targetEnd.isBefore(compareStart) || targetEnd.equals(compareStart));
+
+                    if (NoClashClassAfterEnd || NoClashClassBeforeStart) {
+
+                        continue;
+                    } else {
+
+                        return true;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+
+        }
+        return false;
+    }*/
+      
+       public boolean checkTime() {
+        //SQL command to get all details from REGISTEREDMODULES database with the user's username/matrix number.
+        String q1 = "SELECT * FROM APP.REGISTEREDMODULES WHERE USERNAME='" + lf.getMatrixNo() + "'";
+
+        TableModel model = table1.getModel();
+        int index = table1.getSelectedRow();
+        int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
+        String modulecode = (String) model.getValueAt(index, 0);
+        String time1 = "";
+        String time2 = "";
+        String day = "";
+        
+        try {
+            //Get TIMESTART and TIMEEND of the module from TIMETABLE_MODULES 
+            String occtimes = "SELECT * FROM TIMETABLE_MODULES WHERE MODULES='" + modulecode + "' AND OCCURENCE=" + occ + "";
+            ps = con.prepareStatement(occtimes);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                time1 = rs.getString("TIMESTART").substring(0, 5);
+                time2 = rs.getString("TIMEEND").substring(0, 5);
+                time1 = convert24hours(time1.substring(0, 5));
+                time2 = convert24hours(time2.substring(0, 5));
+                day = rs.getString("DAY");
+
+                System.out.println(day + " " + time1 + " " + time2);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+
+        LocalTime compareStart = LocalTime.parse(time1.substring(0, 5));
+        LocalTime compareEnd = LocalTime.parse(time2.substring(0, 5));
+
+        try {
+            ps = con.prepareStatement(q1);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+
+                String DAY2 = rs.getString("DAY");
+                String TIMESTART = rs.getString("TIMESTART");
+                String TIMEEND = rs.getString("TIMEEND");
+                activity2 = rs.getString("ACTIVITYTYPE");
+                module2 = rs.getString("MODULE");
+                occurence2 = rs.getString("OCC");
+
+                TIMESTART = convert24hours(TIMESTART.substring(0, 5));
+                TIMEEND = convert24hours(TIMEEND.substring(0, 5));
 
                 LocalTime targetStart = LocalTime.parse(TIMESTART.substring(0, 5));
                 LocalTime targetEnd = LocalTime.parse(TIMEEND.substring(0, 5));
@@ -611,7 +700,77 @@ public class Course_Search extends javax.swing.JPanel {
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
         if (JOptionPane.showConfirmDialog(null, "Register the selected modules?", "WARNING",
         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-               int index = table1.getSelectedRow();
+            
+            int index = table1.getSelectedRow();
+        TableModel model = table1.getModel();
+
+        int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
+        String type = model.getValueAt(index, 2).toString();
+        String modulecode = model.getValueAt(index, 0).toString();
+        String day = model.getValueAt(index, 4).toString();
+        String time1 = model.getValueAt(index, 5).toString();
+        String time2 = model.getValueAt(index, 6).toString();
+        String username = lf.getMatrixNo();
+        String actual1 = "";
+
+        //If the module code is either WIA2001 or WIB2001, register the module under the code = WIA2001/WIB2001.
+        if (modulecode.equals("WIA2001") || modulecode.equals("WIB2001")) {
+            modulecode = "WIA2001/WIB2001";
+        }
+
+        try {
+            Statement st;
+            st = con.createStatement();
+            
+            //Check the amount of students already registered to the selected module
+            String checkCap = "SELECT COUNT(*) FROM app.REGISTEREDMODULES where module='" + modulecode + "' and OCC=" + occ + " and ACTIVITYTYPE='" + type + "' and TYPE=1";
+            ResultSet rs3 = st.executeQuery(checkCap);
+            rs3.next();
+            actual1 = rs3.getString(1);
+            System.out.println(actual1);
+
+        } catch (SQLException e) {
+            System.out.println("failed md484 " + e);
+        }
+
+        try {
+            Statement st;
+            st = con.createStatement();
+            
+            //SQL command to find number of rows with the same module.
+            String checkDuplicates = "SELECT COUNT(*) FROM app.REGISTEREDMODULES where module='" + modulecode + "' and USERNAME='" + username + "' and type=1";
+            ResultSet rs3 = st.executeQuery(checkDuplicates);
+            rs3.next();
+            String duplicatedRows = rs3.getString(1);
+            System.out.println(duplicatedRows);
+
+            boolean Clash = checkTime();
+
+            //Check for duplicates modules
+            if (duplicatedRows.equals("0")) {
+                //Check for time conflicts with student's timetable
+                if (Clash) {
+                    JOptionPane.showMessageDialog(null, "CLASHES WITH " + activity2 + " FOR " + module2 + " OCCURENCE " + occurence2);
+                } 
+                //Registers the module to the student's timetable.
+                else {
+                    int actual = Integer.parseInt(actual1) + 1;
+                    
+                    String registerModule = "INSERT INTO APP.REGISTEREDMODULES(USERNAME,MODULE,OCC,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,TYPE) SELECT '" + username + "',MODULES,OCCURENCE,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,1 FROM APP.TIMETABLE_MODULES WHERE OCCURENCE=" + occ + " AND  MODULES='" + modulecode + "'";
+                    String setActual = "UPDATE APP.TIMETABLE_MODULES SET ACTUAL=" + actual + " WHERE MODULES='" + modulecode + "' AND OCCURENCE=" + occ + "";
+
+                    st.execute(registerModule);
+                    st.execute(setActual);
+
+                    JOptionPane.showMessageDialog(null, "MODULE REGISTERED");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "MODULE ALREADY REGISTERED");
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+               /*int index = table1.getSelectedRow();
                 TableModel model = table1.getModel();
               
                 int stdnt = lf.getStudent_type();
@@ -623,9 +782,15 @@ public class Course_Search extends javax.swing.JPanel {
                 String time2 = model.getValueAt(index, 7).toString();
                 String username = lf.getMatrixNo();
                 String actual1 = "";
+                
+                if (modulecode.equals("WIA2001") || modulecode.equals("WIB2001")) {
+                    modulecode = "WIA2001/WIB2001";
+                }
                 try {
                     Statement st;
                     st = con.createStatement();
+                    
+                    //check amount of students 
                     String checkCap = "SELECT COUNT(*) FROM app.REGISTEREDMODULES where module='" + modulecode + "' and OCC=" + occ + " and ACTIVITYTYPE='" + type + "'";
                     ResultSet rs3 = st.executeQuery(checkCap);
                     rs3.next();
@@ -673,7 +838,7 @@ public class Course_Search extends javax.swing.JPanel {
                     JOptionPane.showMessageDialog(null, a);
             }
                    
-        } else {
+        } else {*/
     // no option
 }
     
