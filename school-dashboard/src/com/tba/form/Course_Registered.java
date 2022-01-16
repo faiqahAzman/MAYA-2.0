@@ -168,15 +168,17 @@ public class Course_Registered extends javax.swing.JPanel {
                 
                 
                 
-                //int target_num = Integer.parseInt(table.getValueAt(selectedRowIndex, 3));
-                //int target_num = Integer.parseInt((int) table.getValueAt(selectedRowIndex, 3));
-               int newTG = Integer.parseInt(JOptionPane.showInputDialog(null,"Target Number", 0)); 
+             
+               //int target_num = Integer.parseInt((int) table.getValueAt(selectedRowIndex, 3));
+              
+               
               
                 
                 //table.setValueAt(newTG, selectedRowIndex, 3);
                 
                    
                        int scap = Integer.parseInt((String) table.getValueAt(selectedRowIndex, 6));
+                       int newTG = Integer.parseInt(JOptionPane.showInputDialog(null,"Target Number", scap)); 
                        boolean scap_limit = true;
                        
                        if (newTG <scap ) {
