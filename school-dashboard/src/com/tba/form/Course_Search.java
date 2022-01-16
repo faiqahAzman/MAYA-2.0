@@ -230,7 +230,12 @@ public class Course_Search extends javax.swing.JPanel {
     }
     
      private void retrieveData() {
-        String q1 = "SELECT * FROM TIMETABLE_MODULES JOIN VALID_MODULES ON TIMETABLE_MODULES.MODULES = VALID_MODULES.MODULE";
+         
+         int muet = lf.getMuet_band();
+        if(lf.getMuet_band()==6){
+            muet = 5;
+        }
+            String q1 = "SELECT * FROM TIMETABLE_MODULES JOIN VALID_MODULES ON TIMETABLE_MODULES.MODULES = VALID_MODULES.MODULE WHERE STUDENTTYPE="+lf.getStudent_type()+" OR STUDENTTYPE=0 AND MUET=0 AND CSIT=0 OR MUET="+muet+" OR CSIT="+lf.getCsit()+"ORDER BY MODULE";
         try {
             ps = con.prepareStatement(q1);
             rs = ps.executeQuery();
@@ -245,6 +250,15 @@ public class Course_Search extends javax.swing.JPanel {
                 String CAP = rs.getString("STUDENTCAP");
                  String ACT = rs.getString("ACTUAL");
                  //String CREDIT = rs.getString("CREDIT");
+                 
+                  //Differentiates the course code for Computer Science students and Information Technology students
+                if(MODULES.equals("WIA2001/WIB2001")){
+                  if(lf.getCsit()==1){
+                      MODULES = "WIA2001";
+                  } else if(lf.getCsit()==2){
+                      MODULES = "WIB2001";
+                  }
+                }
 
                 String tbData[] = {MODULES, OCC,AC,DAY, TS,TE,L,CAP,ACT};
                 DefaultTableModel tblModel = (DefaultTableModel) table1.getModel();
@@ -254,7 +268,7 @@ public class Course_Search extends javax.swing.JPanel {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e);
         }
-    }
+     }
      
     
      
