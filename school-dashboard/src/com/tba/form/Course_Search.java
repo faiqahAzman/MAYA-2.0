@@ -159,10 +159,14 @@ public class Course_Search extends javax.swing.JPanel {
                     System.out.println(Countrow3);
 
                     boolean Clash = checkTime();
+                    
 
-                    if (Clash) {
+                    if (Clash ) {
                         JOptionPane.showMessageDialog(null, "CLASHES WITH " + activity2 + " FOR " + module2 + " OCCURENCE " + occurence2);
-                    } else if (Countrow3.equals("0")) {
+                    }else if(cr.setCredits()>6){
+                        JOptionPane.showMessageDialog(null, "MAXIMUM CREDIT IS 22");
+                    } 
+                    else if (Countrow3.equals("0")) {
                       
                         mover.copy_row();
                         
@@ -550,7 +554,8 @@ public class Course_Search extends javax.swing.JPanel {
         }
         return false;
     }*/
-       
+      
+        
   
        
 
