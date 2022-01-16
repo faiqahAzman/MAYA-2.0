@@ -163,7 +163,7 @@ public class Course_Search extends javax.swing.JPanel {
 
                     if (Clash ) {
                         JOptionPane.showMessageDialog(null, "CLASHES WITH " + activity2 + " FOR " + module2 + " OCCURENCE " + occurence2);
-                    }else if(cr.setCredits()>6){
+                    }else if(cr.getCredithour()>22){
                         JOptionPane.showMessageDialog(null, "MAXIMUM CREDIT IS 22");
                     } 
                     else if (Countrow3.equals("0")) {
@@ -847,7 +847,9 @@ public class Course_Search extends javax.swing.JPanel {
                 //Check for time conflicts with student's timetable
                 if (Clash) {
                     JOptionPane.showMessageDialog(null, "CLASHES WITH " + activity2 + " FOR " + module2 + " OCCURENCE " + occurence2);
-                } 
+                } else if(cr.getCredithour()>22){
+                    JOptionPane.showMessageDialog(null, "CREDIT EXCEEDED 22 HOURS");
+                }
                 //Registers the module to the student's timetable.
                 else {
                     int actual = Integer.parseInt(actual1) + 1;

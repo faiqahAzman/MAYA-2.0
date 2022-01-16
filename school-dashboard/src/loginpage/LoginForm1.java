@@ -308,7 +308,7 @@ public class LoginForm1 extends javax.swing.JFrame {
         try {
             
             ps = con.prepareStatement(login);
-            ps.setString(1, matrixNoField.getText());
+            ps.setString(1, (matrixNoField.getText()));
             ps.setString(2, String.valueOf(passwordField.getPassword()));
             rs = ps.executeQuery();
             if (rs.next()) {

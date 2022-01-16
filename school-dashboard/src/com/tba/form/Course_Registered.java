@@ -1,9 +1,6 @@
 package com.tba.form;
 
-
-
 import com.tba.component.Card;
-
 
 import com.tba.form.admin.AdminModules;
 import com.tba.form.admin.AdminOcc;
@@ -14,8 +11,6 @@ import com.tba.swing.Button;
 import com.tba.swing.ButtonColumn;
 
 import com.tba.swing.table.TableNew;
-
-
 
 import com.tba.swing.scrollbar.ScrollBarCustom;
 
@@ -37,6 +32,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractCellEditor;
@@ -61,10 +57,9 @@ import javax.swing.table.TableRowSorter;
 import loginpage.ConnectDatabase;
 import loginpage.LoginForm1;
 
-
 public class Course_Registered extends javax.swing.JPanel {
 
-   
+    static int credithour = 0;
     private Card card;
     Button button = new Button();
     Connection con;
@@ -78,49 +73,44 @@ public class Course_Registered extends javax.swing.JPanel {
     static String act = "";
     static int hours = -1;
     int stype = lf.getStudent_type();
-    
+
     public Course_Registered() {
-        
+
         con = ConnectDatabase.connectdb();
         initComponents();
         setVisible(true);
         setOpaque(false);
         comboPicker();
-        
+
         table1.fixTable(jScrollPane1);
         tblModel = (DefaultTableModel) table1.getModel();
-        
-        if (type.checkType()>=1) {
-           init(); 
-           
-           
-        }
-        else{
+
+        if (type.checkType() >= 1) {
+            init();
+
+        } else {
             initStaff();
             txtCred.setVisible(false);
-            
+
         }
-        
-        
-      
-  
-       
+
     }
-    
+
     private void init() {
-        
+
         showButton();
         getModules();
-        setCredits(); 
-        
+        setCredits();
+        txtCred.setText("TOTAL CREDIT HOUR: "+(credithour));
+
     }
-    
-    private void initStaff(){
-        
+
+    private void initStaff() {
+
         getModuleStaff();
         showButton();
     }
-    
+
     public void setModuleCode(String moduleCode) {
         this.moduleCode = moduleCode;
     }
@@ -128,6 +118,7 @@ public class Course_Registered extends javax.swing.JPanel {
     public String getModuleCode() {
         return moduleCode;
     }
+
     public void setCredit(String credit) {
         this.credit = credit;
     }
@@ -135,93 +126,62 @@ public class Course_Registered extends javax.swing.JPanel {
     public String getCredit() {
         return credit;
     }
+
     public void setAct(String act) {
-        this.act=act;
+        this.act = act;
     }
 
     public String getAct() {
         return act;
     }
-    public void setHours(int hours){
-       this.hours = hours;
+
+    public void setHours(int hours) {
+        this.hours = hours;
     }
+
     public int getHours() {
         return hours;
     }
-    
-    
-    
+
     private void showButton() {
-        
-        Action edit = new AbstractAction()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                
-               
+
+        Action edit = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+
                 /*SpinnerNumberModel sModel = new SpinnerNumberModel(0, 0, 30, 1);
                 JSpinner spinner = new JSpinner(sModel);*/
-                
-                JTable table = (JTable)e.getSource();
+                JTable table = (JTable) e.getSource();
                 int selectedRowIndex = table.getSelectedRow();
-                
-                
-                
-                
-             
-               //int target_num = Integer.parseInt((int) table.getValueAt(selectedRowIndex, 3));
-              
-               
-              
-                
-                //table.setValueAt(newTG, selectedRowIndex, 3);
-                
-                   
-                       int scap = Integer.parseInt((String) table.getValueAt(selectedRowIndex, 6));
-                       int newTG = Integer.parseInt(JOptionPane.showInputDialog(null,"Target Number", scap)); 
-                       boolean scap_limit = true;
-                       
-                       if (newTG <scap ) {
-                           scap_limit = false;
-                          JOptionPane.showMessageDialog(null, "STUDENT LIMIT IS LOWER THAN REIGSTERED STUDENTS!");
-                       }else {
-                            updateTG(newTG);
-                           table.setValueAt(newTG, selectedRowIndex, 6);
-                       
-        }
-                        
-                   
-                   
-                   //updateTG(newTG);
-                   //table.setValueAt(newTG, selectedRowIndex, 4);
-                
-                
-                
-                 //as.setVisible(tr);
-                 
-                 
 
-        
-       
-             
-                
-                
-               
-                
-              
-               
+                //int target_num = Integer.parseInt((int) table.getValueAt(selectedRowIndex, 3));
+                //table.setValueAt(newTG, selectedRowIndex, 3);
+                int scap = Integer.parseInt((String) table.getValueAt(selectedRowIndex, 6));
+                int newTG = Integer.parseInt(JOptionPane.showInputDialog(null, "Target Number", scap));
+                boolean scap_limit = true;
+
+                if (newTG < scap) {
+                    scap_limit = false;
+                    JOptionPane.showMessageDialog(null, "STUDENT LIMIT IS LOWER THAN REIGSTERED STUDENTS!");
+                } else {
+                    updateTG(newTG);
+                    table.setValueAt(newTG, selectedRowIndex, 6);
+
+                }
+
+                //updateTG(newTG);
+                //table.setValueAt(newTG, selectedRowIndex, 4);
+                //as.setVisible(tr);
             }
         };
-       
-        if(type.checkType()== 0){
-        ButtonColumn buttonColumn2 = new ButtonColumn(table1, edit, 8);
+
+        if (type.checkType() == 0) {
+            ButtonColumn buttonColumn2 = new ButtonColumn(table1, edit, 8);
         }
-        
+
     }
-    
+
     private void getModules() {
-        
-        
+
         String q1 = "SELECT * FROM REGISTEREDMODULES WHERE username = '" + lf.getMatrixNo() + "'";
         // String q1 = "SELECT * FROM TIMETABLE_MODULES JOIN REGISTEREDMODULES ON REGISTEREDMODULES.username = '" + lf.getMatrixNo() + "'WHERE REGISTEREDMODULES.MODULE = TIMETABLE_MODULES.MODULES";
         try {
@@ -234,12 +194,8 @@ public class Course_Registered extends javax.swing.JPanel {
                 String DAY = rs.getString("DAY");
                 String TS = rs.getString("TIMESTART");
                 String TE = rs.getString("TIMEEND");
-                
-                
-              
 
-                
-                String tbData[] = {MODULES, OCC, ACTIVITY,DAY, TS,TE};
+                String tbData[] = {MODULES, OCC, ACTIVITY, DAY, TS, TE};
                 DefaultTableModel tblModel = (DefaultTableModel) table1.getModel();
 
                 tblModel.addRow(tbData);
@@ -248,11 +204,10 @@ public class Course_Registered extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, e);
         }
     }
-    
-     private void getModuleStaff() {
-        
-        
-        String q1 = "SELECT * FROM TIMETABLE_MODULES JOIN LOGINTABLE ON LOGINTABLE.matrix_number = '" + lf.getMatrixNo() + "' AND TIMETABLE_MODULES.lecturer=LOGINTABLE.FULLNAME" ;
+
+    private void getModuleStaff() {
+
+        String q1 = "SELECT * FROM TIMETABLE_MODULES JOIN LOGINTABLE ON LOGINTABLE.matrix_number = '" + lf.getMatrixNo() + "' AND TIMETABLE_MODULES.lecturer=LOGINTABLE.FULLNAME";
         try {
             ps = con.prepareStatement(q1);
             rs = ps.executeQuery();
@@ -261,13 +216,12 @@ public class Course_Registered extends javax.swing.JPanel {
                 String OCC = rs.getString("OCCURENCE");
                 String ACTIVITY = rs.getString("ACTIVITYTYPE");
                 String DAY = rs.getString("DAY");
-                 String TS = rs.getString("TIMESTART");
+                String TS = rs.getString("TIMESTART");
                 String TE = rs.getString("TIMEEND");
                 String SC = rs.getString("STUDENTCAP");
                 String AC = rs.getString("ACTUAL");
 
-                
-                String tbData[] = {MODULES, OCC, ACTIVITY,DAY,TS,TE, SC,AC};
+                String tbData[] = {MODULES, OCC, ACTIVITY, DAY, TS, TE, SC, AC};
                 DefaultTableModel tblModel = (DefaultTableModel) table1.getModel();
 
                 tblModel.addRow(tbData);
@@ -276,33 +230,32 @@ public class Course_Registered extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, e);
         }
     }
-    
+
     private void updateTG(int TG) {
-        
-        
+
         try {
             DefaultTableModel tb = (DefaultTableModel) table1.getModel();
             int rows = tb.getRowCount();
-       //for (int i = 0; i < rows; i++) {
-           String modules = tb.getValueAt(table1.getSelectedRow(), 0).toString();
-           String occurence = tb.getValueAt(table1.getSelectedRow(), 1).toString();
-           String act = tb.getValueAt(table1.getSelectedRow(), 2).toString();
+            //for (int i = 0; i < rows; i++) {
+            String modules = tb.getValueAt(table1.getSelectedRow(), 0).toString();
+            String occurence = tb.getValueAt(table1.getSelectedRow(), 1).toString();
+            String act = tb.getValueAt(table1.getSelectedRow(), 2).toString();
 
-           //String query = "UPDATE TIMETABLE_MODULES SET CAPACITY = '"+TG+"' WHERE MODULES ='"+a+"'";
-           String query = "UPDATE TIMETABLE_MODULES"+" SET STUDENTCAP = "+TG+" WHERE MODULES ='"+modules+"'AND "
-                   + "OCCURENCE ="+occurence+" AND ACTIVITYTYPE='"+act+"'"  ;
-           ps = con.prepareStatement(query);
+            //String query = "UPDATE TIMETABLE_MODULES SET CAPACITY = '"+TG+"' WHERE MODULES ='"+a+"'";
+            String query = "UPDATE TIMETABLE_MODULES" + " SET STUDENTCAP = " + TG + " WHERE MODULES ='" + modules + "'AND "
+                    + "OCCURENCE =" + occurence + " AND ACTIVITYTYPE='" + act + "'";
+            ps = con.prepareStatement(query);
 
-           //ps.setInt(7, TG);
-           ps.executeUpdate();
+            //ps.setInt(7, TG);
+            ps.executeUpdate();
             JOptionPane.showMessageDialog(null, "Updated Successfully");
 
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e);
         }
     }
-    
-        /*  public void setCredits(){
+
+    /*  public void setCredits(){
         
         try{
             //Gets all details from REGISTEREDMODULES database with the user's username
@@ -327,121 +280,144 @@ public class Course_Registered extends javax.swing.JPanel {
             
         }
     }*/
+//            ps = con.prepareStatement(getCredit);
+//            rs = ps.executeQuery();
+//                PreparedStatement ps2 = null;
+//                ps2 = con.prepareStatement(getCredit);
+//                ResultSet rs2 = null;
+//                rs2 = ps2.executeQuery();
+//
+//                // tsnm's code starts here
+//                //modules list
+//                List<String> modules = new LinkedList<>();
+//                while (rs2.next()) {
+//                    modules.add(rs2.getString("MODULE"));
+//                    System.out.println(rs2.getString("MODULE"));
+//                }
+//                System.out.println("");
+//
+//                for (int i = 0; i < modules.size(); i++) {
+//
+//                    String currentModule = modules.get(i);
+//                    System.out.println("currentModule: " + currentModule);
+//
+//                    System.out.println("i=" + i);
+//
+//                    for (int j = i + 1; j < modules.size(); j++) {
+//                        System.out.println("j=" + j);
+//                        String modComparedTo = modules.get(j);
+//                        System.out.println("//////////////modComparedTo :" + modComparedTo);
+//
+//                        if (currentModule.equalsIgnoreCase(modComparedTo)) {
+//                            System.out.println("skip");
+//                            System.out.println(modules);
+//                            continue skip;
+//                        }
+//                    }
+//
+//                    System.out.println(rs.getString("MODULE"));
+    //tsnm's code ends here
+
+    public static int getCredithour() {
+        return credithour;
+    }
+
+    public static void setCredithour(int credithour) {
+        Course_Registered.credithour = credithour;
+    }
     
-    public int setCredits(){
+    
+    
+    
+    public void setCredits(){
         int totalcred = 0;
         try{
             //Gets all details from REGISTEREDMODULES database with the user's username
-            String getCredit = "SELECT * FROM VALID_MODULES JOIN REGISTEREDMODULES ON REGISTEREDMODULES.username='"+lf.getMatrixNo()+"' AND VALID_MODULES.module= REGISTEREDMODULES.module";
+            String getCredit = "SELECT * FROM REGISTEREDMODULES WHERE USERNAME='"+lf.getMatrixNo()+"'";
             ps = con.prepareStatement(getCredit);
             rs = ps.executeQuery();
             
             //Gets the TIMESTART and TIMEEND of the modules
             while(rs.next()){
-                int cred = Integer.parseInt(rs.getString("CREDIT"));
+                int time1 = Integer.parseInt(rs.getString("TIMESTART").substring(0,2));
+                int time2 = Integer.parseInt(rs.getString("TIMEEND").substring(0,2));
+                int time = time2-time1;
+                if(time<0){
+                    time = time+12;
+                }
                 //Getting the cummulative time duration (credit hour) of the modules registered to the student
-                totalcred = totalcred+cred;
-
-                txtCred.setText("TOTAL CREDIT HOUR: "+String.valueOf(totalcred));
+                totalcred = totalcred+time;
+                
             }
+            setCredithour(totalcred);
             } catch(SQLException e){
-            
+            System.out.println(e);
         }
-        return totalcred;
     }
-    
+
     private void comboPicker() {
-          
-            
-        
-          String q1 = "SELECT * FROM REGISTEREDMODULES WHERE REGISTEREDMODULES.username = '" + lf.getMatrixNo() + "'";
-         
-          try {
-              
+
+        String q1 = "SELECT * FROM REGISTEREDMODULES WHERE REGISTEREDMODULES.username = '" + lf.getMatrixNo() + "'";
+
+        try {
+
             ps = con.prepareStatement(q1);
             rs = ps.executeQuery();
             while (rs.next()) {
                 String MODULES = rs.getString("MODULE");
-                
-                if(MODULES.equals("WIA2001/WIB2001")){
-                  if(lf.getCsit()==1){
-                      MODULES = "WIA2001";
-                  } else if(lf.getCsit()==2){
-                      MODULES = "WIB2001";
-                  }
+
+                if (MODULES.equals("WIA2001/WIB2001")) {
+                    if (lf.getCsit() == 1) {
+                        MODULES = "WIA2001";
+                    } else if (lf.getCsit() == 2) {
+                        MODULES = "WIB2001";
+                    }
                 }
-                
 
                 modulebox.addItem(MODULES);
             }
-              
-          } catch (Exception e) {
-              JOptionPane.showMessageDialog(null, e);
-          }
-          
-          
-        
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+
     }
-    
-    private void filter(){
-          
-        
+
+    private void filter() {
+
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(tblModel);
-          table1.setRowSorter(sorter);
-         List<RowFilter<DefaultTableModel, Object>> filters = new ArrayList<>();
-         
-         
+        table1.setRowSorter(sorter);
+        List<RowFilter<DefaultTableModel, Object>> filters = new ArrayList<>();
 
         modulebox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-                if(filters.isEmpty())
+                if (filters.isEmpty()) {
                     filters.add(RowFilter.regexFilter(modulebox.getSelectedItem().toString()));
-                else
+                } else {
                     filters.set(0, RowFilter.regexFilter(modulebox.getSelectedItem().toString()));
+                }
                 // Apply filters
                 sorter.setRowFilter(RowFilter.andFilter(filters));
             }
         });
 
-        
-        
-        
         occbox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-                
-                
-                if(filters.size() < 2)
-                   filters.add(RowFilter.regexFilter(occbox.getSelectedItem().toString(),1));
-                    
-                   
-                else
-                  filters.set(1,RowFilter.regexFilter(occbox.getSelectedItem().toString(),1));
-                    //filters.set(1,RowFilter.numberFilter(RowFilter.ComparisonType.EQUAL,occurencebox.getSelectedIndex()));
+
+                if (filters.size() < 2) {
+                    filters.add(RowFilter.regexFilter(occbox.getSelectedItem().toString(), 1));
+                } else {
+                    filters.set(1, RowFilter.regexFilter(occbox.getSelectedItem().toString(), 1));
+                }
+                //filters.set(1,RowFilter.numberFilter(RowFilter.ComparisonType.EQUAL,occurencebox.getSelectedIndex()));
                 // Apply filters
-                
-                sorter.setRowFilter(RowFilter.andFilter(filters));           
+
+                sorter.setRowFilter(RowFilter.andFilter(filters));
             }
         });
-        
-     
-      }
-    
-   
-    
-    
-     
-   
-     
-     
-  
 
-  
-  
-   
-   
-    
-    
-    
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

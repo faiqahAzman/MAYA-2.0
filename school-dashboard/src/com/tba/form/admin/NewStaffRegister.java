@@ -6,6 +6,8 @@
 package com.tba.form.admin;
 
 import java.sql.*;
+import java.util.LinkedList;
+import java.util.List;
 import javax.swing.JOptionPane;
 import loginpage.ConnectDatabase;
 
@@ -18,6 +20,7 @@ public class NewStaffRegister extends javax.swing.JPanel {
     java.sql.PreparedStatement ps = null;
     ResultSet rs = null;
     Connection con = ConnectDatabase.connectdb();
+
     public NewStaffRegister() {
         initComponents();
     }
@@ -173,38 +176,55 @@ public class NewStaffRegister extends javax.swing.JPanel {
         String cpass = txtPass2.getText();
 
         //Combining first name and last name for full name
-        String fullname = fname+" "+lname;
+        String fullname = fname + " " + lname;
+        
+        
 
-        try{
+        try {
+         //   
+            String registeredStaff = "SELECT matrix_number FROM LOGINTABLE WHERE stdnt_type = 0";
+            ps = con.prepareStatement(registeredStaff);
+            rs = ps.executeQuery();
 
-            if(pass.equals(cpass))
-            {
-                if(email.matches(EMAIL_PATTERN)){
-                    //Inserting inputs onto database(LOGINTABLE)
-                    String reg ="INSERT INTO APP.LOGINTABLE(MATRIX_NUMBER,PASSWORD,STDNT_TYPE,MUET_BAND,FULLNAME,CSIT_LOGIN)VALUES('"+username+"','"+pass+"',"+0+","+0+",'"+fullname+"',"+1+")";
-                    Statement st;
-                    st = con.createStatement();
-                    st.execute(reg);
-
-                    String lineSep = System.lineSeparator();
-                    StringBuilder result = new StringBuilder();
-                    result.append(fullname).append(" REGISTERED!").append(lineSep).append(lineSep);
-                    result.append("USERNAME: ").append(username).append(lineSep);
-
-                    JOptionPane.showMessageDialog(null, result.toString());
+            List<String> lecturers = new LinkedList<>();
+            
+            while (rs.next()) {
+                lecturers.add(rs.getString("MATRIX_NUMBER"));
+            }
+            
+            
+            if (pass.equals(cpass)) {
+                if (email.matches(EMAIL_PATTERN)) {
                     
-                } else{
-                    JOptionPane.showMessageDialog(null,"Email is not valid");
+                    if (!lecturers.contains(username)) {
+                        
+                        //Inserting inputs onto database(LOGINTABLE)
+                        String reg = "INSERT INTO APP.LOGINTABLE(MATRIX_NUMBER,PASSWORD,STDNT_TYPE,MUET_BAND,FULLNAME,CSIT_LOGIN)VALUES('" + username + "','" + pass + "'," + 0 + "," + 0 + ",'" + fullname + "'," + 1 + ")";
+                        Statement st;
+                        st = con.createStatement();
+                        st.execute(reg);
+
+                        String lineSep = System.lineSeparator();
+                        StringBuilder result = new StringBuilder();
+                        result.append(fullname).append(" REGISTERED!").append(lineSep).append(lineSep);
+                        result.append("USERNAME: ").append(username).append(lineSep);
+
+                        JOptionPane.showMessageDialog(null, result.toString());
+                        
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Username already exists");
+                    }
+                    
+                } else {
+                    JOptionPane.showMessageDialog(null, "Email is not valid");
                 }
+            } else {
+                JOptionPane.showMessageDialog(null, "Password does not match");
             }
-            else
-            {
-                JOptionPane.showMessageDialog(null,"Password does not match");
-            }
-        }catch(SQLException e){
-            JOptionPane.showMessageDialog(null,"REGISTRATION FAILED BECAUSE OF: " + e);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "REGISTRATION FAILED BECAUSE OF: " + e);
         }
-                                            
+
 
     }//GEN-LAST:event_submitActionPerformed
 
