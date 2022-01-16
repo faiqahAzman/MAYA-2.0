@@ -582,7 +582,7 @@ public class AdminOcc extends javax.swing.JFrame {
             //Inserting edited/new modules
             try {
                 
-                String InsertModule = "INSERT INTO APP.timetable_modules(MODULES,OCCURENCE,DAY,TIMESTART,TIMEEND,ACTIVITYTYPE,LECTURER,STUDENTCAP,ACTUAL)VALUES('" + am.getModuleCode() + "'," + am.getEOcc() + ",'" + am.getEDay() + "','" + am.getETime1() + "','" + am.getETime2() + "','" + am.getEType() + "','" + am.getELec() + "'," + am.getECap() + ","+ am.getEActual()+")";
+                String InsertModule = "INSERT INTO APP.timetable_modules(MODULES,OCCURENCE,DAY,TIMESTART,TIMEEND,ACTIVITYTYPE,LECTURER,STUDENTCAP,ACTUAL)VALUES('" + am.getModuleCode() + "'," + am.getEOcc() + ",'" + am.getEDay() + "','" + am.getETime1() + "','" + am.getETime2() + "','" + am.getEType() + "','" + am.getELec() + "'," + am.getECap() + ","+ 0 +")";
                 String InsertLecturer = "INSERT INTO REGISTEREDMODULES(USERNAME,MODULE,OCC,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,TYPE)VALUES('" + username + "','" + coursecode + "'," + occ + ",'" + type + "','" + day + "','" + t1 + "','" + t2 + "'," + 0 + ")";
                 String checkDuplicate = "SELECT COUNT(*) FROM app.timetable_modules where occurence=" + occ + " and activitytype='" + type + "' and modules='" + am.getModuleCode() + "'";
                 String deleteModule = "DELETE FROM app.timetable_modules WHERE modules ='" + am.getModuleCode() + "' and occurence =" + am.getEOcc() + " and activitytype ='" + am.getEType() + "'";
@@ -631,7 +631,7 @@ public class AdminOcc extends javax.swing.JFrame {
                 //Checking for duplicate modules
                 else if (duplicateRows.equals("0")) {
                     String registerLecturer = "INSERT INTO REGISTEREDMODULES(USERNAME,MODULE,OCC,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,TYPE)VALUES('" + username + "','" + coursecode + "'," + occ + ",'" + type + "','" + day + "','" + t1 + "','" + t2 + "'," + 0 + ")";
-                    String registerModule = "INSERT INTO APP.timetable_modules(MODULES,OCCURENCE,DAY,TIMESTART,TIMEEND,ACTIVITYTYPE,LECTURER,STUDENTCAP,ACTUAL)VALUES('" + coursecode + "'," + occ + ",'" + day + "','" + t1 + "','" + t2 + "','" + type + "','" + lec + "'," + scap + ","+ am.getEActual()+")";
+                    String registerModule = "INSERT INTO APP.timetable_modules(MODULES,OCCURENCE,DAY,TIMESTART,TIMEEND,ACTIVITYTYPE,LECTURER,STUDENTCAP,ACTUAL)VALUES('" + coursecode + "'," + occ + ",'" + day + "','" + t1 + "','" + t2 + "','" + type + "','" + lec + "'," + scap + ","+ 0+")";
                     
                     st.execute(registerLecturer);
                     st.execute(registerModule);

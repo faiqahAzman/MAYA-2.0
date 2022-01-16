@@ -53,6 +53,7 @@ public class Course_Search extends javax.swing.JPanel {
     static String credit = "";
     static String activity = "";
     static int occurence;
+    Course_Registered cr = new Course_Registered();
     
     
     
@@ -118,7 +119,7 @@ public class Course_Search extends javax.swing.JPanel {
                 //
               
                 //mover.copy_row(); //the selected row will be copied from jTable1 to jTable2
-                int index = table1.getSelectedRow();
+               /* int index = table1.getSelectedRow();
                 TableModel model = table1.getModel();
 
                 int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
@@ -174,7 +175,9 @@ public class Course_Search extends javax.swing.JPanel {
                 } catch (SQLException a) {
                     System.out.println("failed md401");
                     JOptionPane.showMessageDialog(null, e);
-            }
+            }*/
+                
+                checkTime();
                 
               
 
@@ -333,7 +336,7 @@ public class Course_Search extends javax.swing.JPanel {
      
       }
       
-      /* public boolean checkTime() {
+      /*public boolean checkTime() {
         String q1 = "SELECT * FROM APP.REGISTEREDMODULES WHERE USERNAME='" + lf.getMatrixNo() + "'";
 
         int index = table1.getSelectedRow();
@@ -384,6 +387,7 @@ public class Course_Search extends javax.swing.JPanel {
       
        public boolean checkTime() {
         //SQL command to get all details from REGISTEREDMODULES database with the user's username/matrix number.
+       
         String q1 = "SELECT * FROM APP.REGISTEREDMODULES WHERE USERNAME='" + lf.getMatrixNo() + "'";
 
         TableModel model = table1.getModel();
@@ -396,7 +400,80 @@ public class Course_Search extends javax.swing.JPanel {
         
         try {
             //Get TIMESTART and TIMEEND of the module from TIMETABLE_MODULES 
+            //String occtimes = "SELECT * FROM TIMETABLE_MODULES  WHERE MODULES='" + modulecode + "' AND OCCURENCE=" + occ + "";
             String occtimes = "SELECT * FROM TIMETABLE_MODULES WHERE MODULES='" + modulecode + "' AND OCCURENCE=" + occ + "";
+            ps = con.prepareStatement(occtimes);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                String modules = rs.getString("MODULES");
+                time1 = rs.getString("TIMESTART").substring(0, 5);
+                time2 = rs.getString("TIMEEND").substring(0, 5);
+                time1 = convert24hours(time1.substring(0, 5));
+                time2 = convert24hours(time2.substring(0, 5));
+                day = rs.getString("DAY");
+
+                System.out.println(modules+" "+day + " " + time1 + " " + time2);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+
+        LocalTime compareStart = LocalTime.parse(time1.substring(0, 5));
+        LocalTime compareEnd = LocalTime.parse(time2.substring(0, 5));
+
+        try {
+            ps = con.prepareStatement(q1);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+
+                String DAY2 = rs.getString("DAY");
+                String TIMESTART = rs.getString("TIMESTART");
+                String TIMEEND = rs.getString("TIMEEND");
+                activity2 = rs.getString("ACTIVITYTYPE");
+                module2 = rs.getString("MODULE");
+                occurence2 = rs.getString("OCC");
+
+                TIMESTART = convert24hours(TIMESTART.substring(0, 5));
+                TIMEEND = convert24hours(TIMEEND.substring(0, 5));
+
+                LocalTime targetStart = LocalTime.parse(TIMESTART.substring(0, 5));
+                LocalTime targetEnd = LocalTime.parse(TIMEEND.substring(0, 5));
+
+                if (day == null ? DAY2 == null : day.equals(DAY2)) {
+
+                    boolean NoClashClassAfterEnd = (targetStart.isAfter(compareEnd) || targetStart.equals(compareEnd));
+                    boolean NoClashClassBeforeStart = (targetEnd.isBefore(compareStart) || targetEnd.equals(compareStart));
+
+                    if (NoClashClassAfterEnd || NoClashClassBeforeStart) {
+
+                        continue;
+                    } else {
+
+                        return true;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+
+        }
+        return false;
+    }
+      
+       //Method to check for the module's time conflicts with the user's timetable
+   /* public boolean checkTime() {
+        //SQL command to get all details from REGISTEREDMODULES database with the user's username/matrix number.
+        String q1 = "SELECT * FROM APP.REGISTEREDMODULES WHERE USERNAME='" + lf.getMatrixNo() + "'";
+
+        TableModel model = table1.getModel();
+        int index = table1.getSelectedRow();
+        int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
+        String time1 = "";
+        String time2 = "";
+        String day = "";
+        
+        try {
+            //Get TIMESTART and TIMEEND of the module from TIMETABLE_MODULES 
+            String occtimes = "SELECT * FROM TIMETABLE_MODULES WHERE MODULES='" + cr.getModuleCode() + "' AND OCCURENCE=" + occ + "";
             ps = con.prepareStatement(occtimes);
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -451,7 +528,7 @@ public class Course_Search extends javax.swing.JPanel {
 
         }
         return false;
-    }
+    }*/
        
   
        
@@ -483,6 +560,7 @@ public class Course_Search extends javax.swing.JPanel {
         table1 = new com.tba.swing.table.TableNew();
         modulebox = new javax.swing.JComboBox<>();
         occurencebox = new javax.swing.JComboBox<>();
+        txtSearch = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -554,6 +632,13 @@ public class Course_Search extends javax.swing.JPanel {
 
         occurencebox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
 
+        txtSearch.setText("jTextField1");
+        txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSearchKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -567,7 +652,9 @@ public class Course_Search extends javax.swing.JPanel {
                             .addGap(11, 11, 11)
                             .addComponent(modulebox, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(18, 18, 18)
-                            .addComponent(occurencebox, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(occurencebox, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 998, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -578,7 +665,8 @@ public class Course_Search extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(modulebox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(occurencebox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(occurencebox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 417, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -851,8 +939,16 @@ public class Course_Search extends javax.swing.JPanel {
     private void moduleboxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_moduleboxItemStateChanged
         String query = modulebox.getSelectedItem().toString();
         
-        filter();
+       // filter();
     }//GEN-LAST:event_moduleboxItemStateChanged
+
+    private void txtSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyReleased
+        DefaultTableModel table = (DefaultTableModel)table1.getModel();
+        String search = txtSearch.getText().toUpperCase();
+        TableRowSorter<DefaultTableModel> tr = new TableRowSorter<DefaultTableModel>(table);
+        table1.setRowSorter(tr);
+        tr.setRowFilter(RowFilter.regexFilter(search));
+    }//GEN-LAST:event_txtSearchKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -871,6 +967,7 @@ public class Course_Search extends javax.swing.JPanel {
     private com.tba.swing.table.TableNew table1;
     private com.tba.swing.table.TableNew table2;
     private javax.swing.JLabel txtCred;
+    private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }
 

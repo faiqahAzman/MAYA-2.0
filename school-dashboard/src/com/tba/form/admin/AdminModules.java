@@ -12,6 +12,7 @@ import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.UIManager;
@@ -206,11 +207,11 @@ public class AdminModules extends javax.swing.JPanel {
 
             },
             new String [] {
-                "MODULES", "OCC", "DAY", "TIMESTART", "TIMEEND", "ACTIVITY", "LECTURER", "TARGET"
+                "MODULES", "OCC", "DAY", "TIMESTART", "TIMEEND", "ACTIVITY", "LECTURER", "TARGET", "ACTUAL"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -520,22 +521,22 @@ public class AdminModules extends javax.swing.JPanel {
                 int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
                 int scap = Integer.parseInt(model.getValueAt(index, 7).toString());
                 int edit = 1;
-                int actual = Integer.parseInt(model.getValueAt(index, 8).toString());
+                //int actual = Integer.parseInt(model.getValueAt(index, 8).toString());
                 String typ = model.getValueAt(index, 5).toString();
                 String day = model.getValueAt(index, 2).toString();
                 String time1 = model.getValueAt(index, 3).toString();
-                String time2 = model.getValueAt(index, 3).toString();
+                String time2 = model.getValueAt(index, 4).toString();
                 String time = time1.substring(0,5);
                 
-                String lec = model.getValueAt(index, 6).toString();
                 //String lec = model.getValueAt(index, 6).toString();
-                setEdit(occ, scap, typ, day, time, edit, time1, time2, lec, actual);
+                //String lec = model.getValueAt(index, 6).toString();
+                setEdit(occ, scap, typ, day, time, edit, time1, time2);
                 as.editMod(); //sends details on selected module to addModules Form
                 as.setVisible(true);
 
 //                JOptionPane.showMessageDialog(null,"no addModules Form yet");
             }catch(Exception e){
-                System.out.println("273 md");
+                System.out.println(e.getMessage());
             }
         }else{
         JOptionPane.showMessageDialog(null,"no row is selected");
@@ -543,13 +544,36 @@ public class AdminModules extends javax.swing.JPanel {
     }//GEN-LAST:event_editButtonActionPerformed
 
     private void deleteOccBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteOccBtnActionPerformed
-        // TODO add your handling code here:
         DefaultTableModel dtm = (DefaultTableModel) occTable.getModel();
+        //Show a yes or no panel to confirm deletion of the selected module
+        JFrame frame = new JFrame("Delete");
+        if (JOptionPane.showConfirmDialog(frame, "Are you sure you want to delete this module? ",
+            " ",
+            JOptionPane.YES_NO_OPTION) == JOptionPane.YES_NO_OPTION) {
+            try {
+                int index = occTable.getSelectedRow();
+                TableModel model = occTable.getModel();
+                String code = model.getValueAt(index, 0).toString();
+                System.out.println(code);
+                String type = model.getValueAt(index, 5).toString();
+                int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
+
+                PreparedStatement st1 = con.prepareStatement("DELETE FROM app.TIMETABLE_MODULES WHERE modules ='" + code + "' and occurence =" + occ + " and activitytype ='" + type + "'");
+                PreparedStatement st2 = con.prepareStatement("DELETE FROM APP.REGISTEREDMODULES WHERE MODULE='" + code + "' and occ =" + occ + " and activitytype ='" + type + "'");
+
+                st1.executeUpdate();
+                st2.executeUpdate();
+                dtm.removeRow(index);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "NO COURSE SELECTED");
+            }
+        }
+       /* DefaultTableModel dtm = (DefaultTableModel) occTable.getModel();
         try{
             /*int SelectedRowIndex = jTable1.getSelectedRow();
             model.removeRow(SelectedRowIndex);
             PreparedStatement st = con.prepareStatement("DELETE FROM app.valid_modules WHERE modules = " + name + "");
-            st.executeUpdate();*/
+            st.executeUpdate();
             int index = occTable.getSelectedRow();
             TableModel model = occTable.getModel();
             String code = model.getValueAt(index, 0).toString();
@@ -562,7 +586,7 @@ public class AdminModules extends javax.swing.JPanel {
             dtm.removeRow(index);
         }catch(Exception ex){
             JOptionPane.showMessageDialog(null,"NO COURSE SELECTED");
-        }
+        }*/
     }//GEN-LAST:event_deleteOccBtnActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
@@ -628,12 +652,12 @@ public class AdminModules extends javax.swing.JPanel {
 
     }
     
-   /* public void setEdit(int occ,int scap,String type,String day,String time,int edit,String time1,String time2){
+   public void setEdit(int occ,int scap,String type,String day,String time,int edit,String time1,String time2){
         this.occ = occ;
         this.type = type;
         this.eday = day;    //e for edit
         this.etime = time;
-        this.elec = lec;
+        //this.elec = lec;
         this.ecap = scap;
         this.edit = edit;
         this.etime1 = time1;
@@ -665,10 +689,10 @@ public class AdminModules extends javax.swing.JPanel {
     }
     public int getEdit(){
         return edit;
-    }*/
+    }
     
      //Method to set the values of the data with details from the module
-    public void setEdit(int occ, int scap, String type, String day, String time, int edit, String time1, String time2, String lec, int actual) {
+   /* public void setEdit(int occ, int scap, String type, String day, String time, int edit, String time1, String time2, String lec, int actual) {
         this.occ = occ;
         this.type = type;
         this.eday = day;
@@ -719,7 +743,7 @@ public class AdminModules extends javax.swing.JPanel {
 
     public int getEdit() {
         return edit;
-    }
+    }*/
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

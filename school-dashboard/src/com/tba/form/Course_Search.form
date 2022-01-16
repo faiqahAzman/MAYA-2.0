@@ -124,6 +124,8 @@
                                       <Component id="modulebox" min="-2" pref="188" max="-2" attributes="0"/>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Component id="occurencebox" min="-2" pref="89" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="txtSearch" min="-2" pref="254" max="-2" attributes="0"/>
                                   </Group>
                                   <Component id="jScrollPane1" min="-2" pref="998" max="-2" attributes="0"/>
                               </Group>
@@ -140,6 +142,7 @@
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="modulebox" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="occurencebox" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="txtSearch" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace pref="15" max="32767" attributes="0"/>
                           <Component id="jScrollPane1" min="-2" pref="417" max="-2" attributes="0"/>
@@ -277,6 +280,14 @@
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                   </AuxValues>
+                </Component>
+                <Component class="javax.swing.JTextField" name="txtSearch">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="jTextField1"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtSearchKeyReleased"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>

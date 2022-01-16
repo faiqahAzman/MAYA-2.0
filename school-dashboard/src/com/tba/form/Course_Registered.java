@@ -70,6 +70,11 @@ public class Course_Registered extends javax.swing.JPanel {
     DefaultTableModel tblModel;
     private ModelStudentType type = new ModelStudentType();
     LoginForm1 lf = new LoginForm1();
+    static String moduleCode = "";
+    static String credit = "";
+    static String act = "";
+    static int hours = -1;
+    int stype = lf.getStudent_type();
     
     public Course_Registered() {
         
@@ -110,6 +115,36 @@ public class Course_Registered extends javax.swing.JPanel {
         getModuleStaff();
         showButton();
     }
+    
+    public void setModuleCode(String moduleCode) {
+        this.moduleCode = moduleCode;
+    }
+
+    public String getModuleCode() {
+        return moduleCode;
+    }
+    public void setCredit(String credit) {
+        this.credit = credit;
+    }
+
+    public String getCredit() {
+        return credit;
+    }
+    public void setAct(String act) {
+        this.act=act;
+    }
+
+    public String getAct() {
+        return act;
+    }
+    public void setHours(int hours){
+       this.hours = hours;
+    }
+    public int getHours() {
+        return hours;
+    }
+    
+    
     
     private void showButton() {
         
@@ -191,6 +226,8 @@ public class Course_Registered extends javax.swing.JPanel {
                 String DAY = rs.getString("DAY");
                 String TS = rs.getString("TIMESTART");
                 String TE = rs.getString("TIMEEND");
+                
+              
 
                 
                 String tbData[] = {MODULES, OCC, ACTIVITY,DAY, TS,TE};
