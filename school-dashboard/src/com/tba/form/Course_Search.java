@@ -3,6 +3,7 @@ package com.tba.form;
 
 
 
+import com.tba.form.admin.ViewRegisteredStudents;
 import com.tba.model.ModelStudentType;
 import com.tba.swing.Button;
 import com.tba.swing.ButtonColumn;
@@ -105,9 +106,59 @@ public class Course_Search extends javax.swing.JPanel {
         {
             public void actionPerformed(ActionEvent e)
             {
-                JTable table = (JTable)e.getSource();
+                 try {
+                     
+                     Statement st;
+                     st = con.createStatement();
+                     
+                    JTable table = (JTable)e.getSource();
+                    int selectedRowIndex = table.getSelectedRow();
+                     int occ = Integer.parseInt(table.getValueAt(selectedRowIndex, 1).toString());
+                        String type = table.getValueAt(selectedRowIndex, 2).toString();
+                        String modulecode = table.getValueAt(selectedRowIndex, 0).toString();
+                        String day = table.getValueAt(selectedRowIndex, 3).toString();
+                        String time1 = table.getValueAt(selectedRowIndex, 4).toString();
+                        String time2 = table.getValueAt(selectedRowIndex, 5).toString();
+                        String username = lf.getMatrixNo();
+                        String actual1 = "";
+                        
+                          try {
+                            
+
+                            //Check the amount of students already registered to the selected module
+                            String checkCap = "SELECT COUNT(*) FROM app.REGISTEREDMODULES where module='" + modulecode + "' and OCC=" + occ + " and ACTIVITYTYPE='" + type + "' and TYPE=1";
+                            ResultSet rs3 = st.executeQuery(checkCap);
+                            rs3.next();
+                            actual1 = rs3.getString(1);
+                            System.out.println(actual1);
+
+                        } catch (SQLException ae) {
+                            System.out.println("failed md484 " + ae);
+                        }
+                        
+                        
+
+                  
+                   
+                    
+                    int actual = Integer.parseInt(actual1)-1;
+                    //PreparedStatement st = con.prepareStatement("DELETE FROM REGISTEREDMODULES WHERE username ='" + username + "' and occ =" + occ + " and activitytype ='"+type+"'and module = '" + modulecode + "'and timestart ='" + time1 + "'and timeend = '" + time2 + "'and day ='" + day + "'" );
+                    String setDelete="DELETE FROM REGISTEREDMODULES WHERE username ='" + username + "' and occ =" + occ + " and activitytype ='"+type+"'and module = '" + modulecode + "'and timestart ='" + time1 + "'and timeend = '" + time2 + "'and day ='" + day + "'" ;
+                    String setActual = "UPDATE APP.TIMETABLE_MODULES SET ACTUAL=" + actual + " WHERE MODULES='" + modulecode + "' AND OCCURENCE=" + occ + "";
+                    st.execute(setDelete);
+                    st.execute(setActual);
+                    
+                 
+                    
+                    int modelRow = Integer.valueOf( e.getActionCommand() );
+                    ((DefaultTableModel)table.getModel()).removeRow(modelRow);
+                } catch (Exception a) {
+                    Logger.getLogger(Course_Search.class.getName()).log(Level.SEVERE, null, a);
+                }
+               /* JTable table = (JTable)e.getSource();
+                
                 int modelRow = Integer.valueOf( e.getActionCommand() );
-                ((DefaultTableModel)table.getModel()).removeRow(modelRow);
+                ((DefaultTableModel)table.getModel()).removeRow(modelRow);*/
             }
         };
         
@@ -181,7 +232,7 @@ public class Course_Search extends javax.swing.JPanel {
                     JOptionPane.showMessageDialog(null, e);
             }*/
                 
-                int index = table1.getSelectedRow();
+            int index = table1.getSelectedRow();
             TableModel model = table1.getModel();
 
             int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
@@ -240,10 +291,10 @@ public class Course_Search extends javax.swing.JPanel {
                          mover.copy_row();
                         int actual = Integer.parseInt(actual1) + 1;
 
-                        //String registerModule = "INSERT INTO APP.REGISTEREDMODULES(USERNAME,MODULE,OCC,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,TYPE) SELECT '" + username + "',MODULES,OCCURENCE,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,1 FROM APP.TIMETABLE_MODULES WHERE OCCURENCE=" + occ + " AND  MODULES='" + modulecode + "'";
+                        String registerModule = "INSERT INTO APP.REGISTEREDMODULES(USERNAME,MODULE,OCC,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,TYPE) SELECT '" + username + "',MODULES,OCCURENCE,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,1 FROM APP.TIMETABLE_MODULES WHERE OCCURENCE=" + occ + " AND  MODULES='" + modulecode + "'";
                         String setActual = "UPDATE APP.TIMETABLE_MODULES SET ACTUAL=" + actual + " WHERE MODULES='" + modulecode + "' AND OCCURENCE=" + occ + "";
 
-                        //st.execute(registerModule);
+                        st.execute(registerModule);
                         st.execute(setActual);
 
                         //JOptionPane.showMessageDialog(null, "MODULE REGISTERED");
@@ -870,7 +921,11 @@ public class Course_Search extends javax.swing.JPanel {
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
         if (JOptionPane.showConfirmDialog(null, "Register the selected modules?", "WARNING",
         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-        try{
+       
+            
+            
+
+         /* try{
             
             
 
@@ -890,8 +945,23 @@ public class Course_Search extends javax.swing.JPanel {
               
               //Integer unitprice = (Integer) table2.getValueAt(row, 1);
               /*String description = (String)table2.getValueAt(row, 2);
-              String total = (String)table2.getValueAt(row, 3);*/
+              String total = (String)table2.getValueAt(row, 3);
               String queryco = "Insert into registeredmodules(USERNAME,MODULE,OCC,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,TYPE) values ('"+username+"','"+modulecode+"',"+occ+",'"+type+"','"+day+"','"+time1+"','"+time2+"',"+1+")";
+
+              ps= con.prepareStatement(queryco);
+              ps.execute();     
+            }*/
+            JOptionPane.showMessageDialog(null, "Successfully Save");
+        /*  }
+          catch(Exception e){
+            JOptionPane.showMessageDialog(this,e.getMessage());
+          }*/
+              
+              
+
+           
+            
+              /*String queryco = "Insert into registeredmodules(USERNAME,MODULE,OCC,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,TYPE) values ('"+username+"','"+modulecode+"',"+occ+",'"+type+"','"+day+"','"+time1+"','"+time2+"',"+1+")";
 
               ps= con.prepareStatement(queryco);
               ps.execute();     
@@ -900,7 +970,7 @@ public class Course_Search extends javax.swing.JPanel {
           }
           catch(Exception e){
             JOptionPane.showMessageDialog(this,e.getMessage());
-          }
+          }*/
    
         /*int index = table1.getSelectedRow();
         TableModel model = table1.getModel();
@@ -1043,7 +1113,9 @@ public class Course_Search extends javax.swing.JPanel {
                    
         } else {*/
     // no option
-}
+
+            
+        }
     
     }//GEN-LAST:event_button1ActionPerformed
 
