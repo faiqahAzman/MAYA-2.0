@@ -431,7 +431,7 @@ public class AdminOcc extends javax.swing.JFrame {
         jLabel2.setText("Actual Students");
 
         actualStudentsPlaceholder.setFont(new java.awt.Font("Tw Cen MT", 1, 18)); // NOI18N
-        actualStudentsPlaceholder.setText("Placeholder");
+        actualStudentsPlaceholder.setText("0");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -637,14 +637,14 @@ public class AdminOcc extends javax.swing.JFrame {
                     st.execute(registerModule);
 
                     if (edit == 1) {
-                        JOptionPane.showMessageDialog(this, "Module Updated");
+                        JOptionPane.showMessageDialog(this, "Occurence Updated");
                     } else {
-                        JOptionPane.showMessageDialog(this, "Module Added");
+                        JOptionPane.showMessageDialog(this, "Occurence Added");
                     }
                     
                 } 
                 else {
-                    JOptionPane.showMessageDialog(this, "Module already exists!");
+                    JOptionPane.showMessageDialog(this, "Occurence already exists!");
                     //Insert the original module and lecturer if edit fails.
                     if (edit == 1) {
                         st.execute(InsertModule);
@@ -653,7 +653,7 @@ public class AdminOcc extends javax.swing.JFrame {
                 }
 
             } catch (HeadlessException | SQLException e) {
-                JOptionPane.showMessageDialog(this, "Failed to Add Course");
+                JOptionPane.showMessageDialog(this, "Failed to Add Occurence");
             }
         
        

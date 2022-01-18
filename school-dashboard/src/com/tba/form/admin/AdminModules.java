@@ -182,7 +182,7 @@ public class AdminModules extends javax.swing.JPanel {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, true
+                false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -565,9 +565,10 @@ public class AdminModules extends javax.swing.JPanel {
                 String ACTIVITY = rs.getString("ACTIVITYTYPE");
                 String LECTURER = rs.getString("LECTURER");
                 String TARGET = rs.getString("STUDENTCAP");
+                String ACT = rs.getString("ACTUAL");
                
 
-                String tbData[] = {MODULES, OCCURENCE, DAY, TIMESTART, TIMEEND, ACTIVITY, LECTURER,TARGET};
+                String tbData[] = {MODULES, OCCURENCE, DAY, TIMESTART, TIMEEND, ACTIVITY, LECTURER,TARGET,ACT};
 
                 tblModel.addRow(tbData);
             }

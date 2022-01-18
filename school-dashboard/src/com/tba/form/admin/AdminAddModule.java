@@ -39,6 +39,8 @@ public class AdminAddModule extends javax.swing.JFrame {
         txtSpec2.setVisible(false);
         getHours();
         hideHours();
+        lecHoursLabel.setVisible(true);
+        LecHour.setVisible(true);
     }
     
     //get the hours
@@ -401,14 +403,20 @@ public class AdminAddModule extends javax.swing.JFrame {
             hideHours();
             LecHour.setVisible(true);
             lecHoursLabel.setVisible(true);
+            TutHour.setValue(Integer.valueOf("0"));
+            LabHour.setValue(Integer.valueOf("0"));
         } else if(index == 1){
             hideHours();
             TutHour.setVisible(true);
             tutHoursLabel.setVisible(true);
+            LecHour.setValue(Integer.valueOf("0"));
+            LabHour.setValue(Integer.valueOf("0"));
         } else if(index == 2){
             hideHours();
             LabHour.setVisible(true);
             labHoursLabel.setVisible(true);
+            LecHour.setValue(Integer.valueOf("0"));
+            TutHour.setValue(Integer.valueOf("0"));
         } else if(index == 3){
             hideHours();
             LecHour.setVisible(true);
@@ -423,12 +431,14 @@ public class AdminAddModule extends javax.swing.JFrame {
             lecHoursLabel.setVisible(true);
             TutHour.setVisible(true);
             tutHoursLabel.setVisible(true);
+            LabHour.setValue(Integer.valueOf("0"));
         } else if(index == 5){
             hideHours();
             LabHour.setVisible(true);
             labHoursLabel.setVisible(true);
             TutHour.setVisible(true);
             tutHoursLabel.setVisible(true);
+            LecHour.setValue(Integer.valueOf("0"));
         }
     }//GEN-LAST:event_txtTypeActionPerformed
 

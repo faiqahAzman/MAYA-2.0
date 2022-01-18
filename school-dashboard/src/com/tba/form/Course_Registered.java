@@ -80,7 +80,6 @@ public class Course_Registered extends javax.swing.JPanel {
         initComponents();
         setVisible(true);
         setOpaque(false);
-        
 
         table1.fixTable(jScrollPane1);
         tblModel = (DefaultTableModel) table1.getModel();
@@ -96,16 +95,17 @@ public class Course_Registered extends javax.swing.JPanel {
         }
 
     }
+
     //features for students
     private void init() {
 
         showButton();
         getModules();
         setCredits();
-        txtCred.setText("TOTAL CREDIT HOUR: "+(credithour));
+        txtCred.setText("TOTAL CREDIT HOUR: " + (credithour));
 
     }
-    
+
     //features for staff
     private void initStaff() {
 
@@ -144,33 +144,41 @@ public class Course_Registered extends javax.swing.JPanel {
     public int getHours() {
         return hours;
     }
-    
+
     //feature for lecturer to edit capacity
     private void showButton() {
 
         Action edit = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
 
-                
                 JTable table = (JTable) e.getSource();
                 int selectedRowIndex = table.getSelectedRow();
                 String cap = table.getValueAt(selectedRowIndex, 6).toString();
 
-                
-                int scap = Integer.parseInt(cap);
-                int newTG = Integer.parseInt(JOptionPane.showInputDialog(null, "Target Number", scap));
-                boolean scap_limit = true;
+                try {
+                    int scap = Integer.parseInt(cap);
+                    try{
 
-                if (newTG < scap) {
-                    scap_limit = false;
-                    JOptionPane.showMessageDialog(null, "STUDENT LIMIT IS LOWER THAN REIGSTERED STUDENTS!");
-                } else {
-                    updateTG(newTG);
-                    table.setValueAt(newTG, selectedRowIndex, 6);
+                    int newTG = Integer.parseInt(JOptionPane.showInputDialog(null, "Target Number", scap));
+                    boolean scap_limit = true;
 
+                    if (newTG < scap) {
+                        scap_limit = false;
+                        JOptionPane.showMessageDialog(null, "STUDENT LIMIT IS LOWER THAN REIGSTERED STUDENTS!");
+                    } else if(newTG==scap){
+                        JOptionPane.showMessageDialog(null, "Capacity unchanged");
+                    }else {
+                        updateTG(newTG);
+                        table.setValueAt(newTG, selectedRowIndex, 6);
+                    }
+                    }catch(NumberFormatException a){
+                        JOptionPane.showMessageDialog(null, "Capacity unchanged");
+                    }
+
+                } catch (ClassCastException ae) {
+                    JOptionPane.showMessageDialog(null, "To edit capacity again, please refresh the page by clicking 'Registered' tab");
                 }
 
-                
             }
         };
 
@@ -179,12 +187,12 @@ public class Course_Registered extends javax.swing.JPanel {
         }
 
     }
-    
+
     //feature to display modules based on user student
     private void getModules() {
 
         String q1 = "SELECT * FROM REGISTEREDMODULES WHERE username = '" + lf.getMatrixNo() + "'";
-        
+
         try {
             ps = con.prepareStatement(q1);
             rs = ps.executeQuery();
@@ -232,24 +240,22 @@ public class Course_Registered extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, e);
         }
     }
-    
+
     //method to update capacity
     private void updateTG(int TG) {
 
         try {
             DefaultTableModel tb = (DefaultTableModel) table1.getModel();
             int rows = tb.getRowCount();
-           
+
             String modules = tb.getValueAt(table1.getSelectedRow(), 0).toString();
             String occurence = tb.getValueAt(table1.getSelectedRow(), 1).toString();
             String act = tb.getValueAt(table1.getSelectedRow(), 2).toString();
 
-           
             String query = "UPDATE TIMETABLE_MODULES" + " SET STUDENTCAP = " + TG + " WHERE MODULES ='" + modules + "'AND "
                     + "OCCURENCE =" + occurence + " AND ACTIVITYTYPE='" + act + "'";
             ps = con.prepareStatement(query);
 
-           
             ps.executeUpdate();
             JOptionPane.showMessageDialog(null, "Updated Successfully");
 
@@ -258,8 +264,6 @@ public class Course_Registered extends javax.swing.JPanel {
         }
     }
 
-  
-
     public static int getCredithour() {
         return credithour;
     }
@@ -267,36 +271,34 @@ public class Course_Registered extends javax.swing.JPanel {
     public static void setCredithour(int credithour) {
         Course_Registered.credithour = credithour;
     }
-    
-    
-    
+
     //method to set total credit
-    public void setCredits(){
+    public void setCredits() {
         int totalcred = 0;
-        try{
-          
-            String getCredit = "SELECT * FROM REGISTEREDMODULES WHERE USERNAME='"+lf.getMatrixNo()+"'";
+        try {
+
+            String getCredit = "SELECT * FROM REGISTEREDMODULES WHERE USERNAME='" + lf.getMatrixNo() + "'";
             ps = con.prepareStatement(getCredit);
             rs = ps.executeQuery();
-            
+
             //Gets the TIMESTART and TIMEEND of the modules
-            while(rs.next()){
-                int time1 = Integer.parseInt(rs.getString("TIMESTART").substring(0,2));
-                int time2 = Integer.parseInt(rs.getString("TIMEEND").substring(0,2));
-                int time = time2-time1;
-                if(time<0){
-                    time = time+12;
+            while (rs.next()) {
+                int time1 = Integer.parseInt(rs.getString("TIMESTART").substring(0, 2));
+                int time2 = Integer.parseInt(rs.getString("TIMEEND").substring(0, 2));
+                int time = time2 - time1;
+                if (time < 0) {
+                    time = time + 12;
                 }
                 //Getting the cummulative time duration (credit hour) of the modules registered to the student
-                totalcred = totalcred+time;
-                
+                totalcred = totalcred + time;
+
             }
             setCredithour(totalcred);
-            } catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println(e);
         }
     }
-    
+
     //method to show modules in combo box
     private void comboPicker() {
 
@@ -325,6 +327,7 @@ public class Course_Registered extends javax.swing.JPanel {
         }
 
     }
+
     //method to filter out the jtable based on the combo box
     private void filter() {
 
@@ -352,9 +355,8 @@ public class Course_Registered extends javax.swing.JPanel {
                 } else {
                     filters.set(1, RowFilter.regexFilter(occbox.getSelectedItem().toString(), 1));
                 }
-                
-                // Apply filters
 
+                // Apply filters
                 sorter.setRowFilter(RowFilter.andFilter(filters));
             }
         });
