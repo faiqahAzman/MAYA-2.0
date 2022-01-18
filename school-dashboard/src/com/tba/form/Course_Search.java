@@ -69,7 +69,7 @@ public class Course_Search extends javax.swing.JPanel {
         sp.getViewport().setOpaque(false);
         sp.setVerticalScrollBar(new ScrollBarCustom());
         sp.setViewportBorder(BorderFactory.createLineBorder(new Color(244,247,252)));
-        //comboPicker();
+      
         showData();
         if(type.checkType()>=1){
            showButton();
@@ -98,7 +98,7 @@ public class Course_Search extends javax.swing.JPanel {
     
     
     
-    
+    //method to allow user to add or drop modules
     private void showButton(){
        TableMover mover = new TableMover(table1, table2);
         
@@ -142,7 +142,7 @@ public class Course_Search extends javax.swing.JPanel {
                    
                     
                     int actual = Integer.parseInt(actual1)-1;
-                    //PreparedStatement st = con.prepareStatement("DELETE FROM REGISTEREDMODULES WHERE username ='" + username + "' and occ =" + occ + " and activitytype ='"+type+"'and module = '" + modulecode + "'and timestart ='" + time1 + "'and timeend = '" + time2 + "'and day ='" + day + "'" );
+                    
                     String setDelete="DELETE FROM REGISTEREDMODULES WHERE username ='" + username + "' and occ =" + occ + " and activitytype ='"+type+"'and module = '" + modulecode + "'and timestart ='" + time1 + "'and timeend = '" + time2 + "'and day ='" + day + "'" ;
                     String setActual = "UPDATE APP.TIMETABLE_MODULES SET ACTUAL=" + actual + " WHERE MODULES='" + modulecode + "' AND OCCURENCE=" + occ + "";
                     st.execute(setDelete);
@@ -155,10 +155,7 @@ public class Course_Search extends javax.swing.JPanel {
                 } catch (Exception a) {
                     Logger.getLogger(Course_Search.class.getName()).log(Level.SEVERE, null, a);
                 }
-               /* JTable table = (JTable)e.getSource();
-                
-                int modelRow = Integer.valueOf( e.getActionCommand() );
-                ((DefaultTableModel)table.getModel()).removeRow(modelRow);*/
+               
             }
         };
         
@@ -167,70 +164,7 @@ public class Course_Search extends javax.swing.JPanel {
             public void actionPerformed(ActionEvent e)
             {
                 
-                //
-              
-                //mover.copy_row(); //the selected row will be copied from jTable1 to jTable2
-              /* int index = table1.getSelectedRow();
-                TableModel model = table1.getModel();
-
-                int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
-                String type = model.getValueAt(index, 2).toString();
-                String modulecode = model.getValueAt(index, 0).toString();
-                String day = model.getValueAt(index, 5).toString();
-                String time1 = model.getValueAt(index, 6).toString();
-                String time2 = model.getValueAt(index, 7).toString();
-                String username = lf.getMatrixNo();
-                String actual1 = "";
                 
-                //If the module code is either WIA2001 or WIB2001, register the module under the code = WIA2001/WIB2001.
-                if (modulecode.equals("WIA2001") || modulecode.equals("WIB2001")) {
-                    modulecode = "WIA2001/WIB2001";
-                }
-                try {
-                    Statement st;
-                    st = con.createStatement();
-                    String checkCap = "SELECT COUNT(*) FROM app.REGISTEREDMODULES where module='" + modulecode + "' and OCC=" + occ + " and ACTIVITYTYPE='" + type + "'";
-                    ResultSet rs3 = st.executeQuery(checkCap);
-                    rs3.next();
-                    actual1 = rs3.getString(1);
-                    System.out.println(actual1);
-
-                } catch (SQLException a) {
-                    System.out.println("failed md484");
-                }
-
-                try {
-                    Statement st;
-                    Statement st1;
-                    st = con.createStatement();
-                    String strQuery3 = "SELECT COUNT(*) FROM app.REGISTEREDMODULES where module='" + modulecode + "' and USERNAME='" + username + "'";
-                    ResultSet rs3 = st.executeQuery(strQuery3);
-                    rs3.next();
-                    String Countrow3 = rs3.getString(1);
-                    System.out.println(Countrow3);
-
-                    boolean Clash = checkTime();
-                    
-
-                    if (Clash ) {
-                        JOptionPane.showMessageDialog(null, "CLASHES WITH " + activity2 + " FOR " + module2 + " OCCURENCE " + occurence2);
-                    }else if(cr.getCredithour()>22){
-                        JOptionPane.showMessageDialog(null, "MAXIMUM CREDIT IS 22");
-                    } 
-                    else if (Countrow3.equals("0")) {
-                      
-                        mover.copy_row();
-                        
-
-                        
-                    } else {
-                        JOptionPane.showMessageDialog(null, "MODULE ALREADY REGISTERED");
-
-                    }
-                } catch (SQLException a) {
-                    System.out.println("failed md401");
-                    JOptionPane.showMessageDialog(null, e);
-            }*/
                 
             int index = table1.getSelectedRow();
             TableModel model = table1.getModel();
@@ -340,6 +274,7 @@ public class Course_Search extends javax.swing.JPanel {
 
         
     }
+    //converts time according to the 24 hour format
       public String convert24hours(String time) {
         if (time.equals("01:00")) {
             time = "13:00";
@@ -359,6 +294,7 @@ public class Course_Search extends javax.swing.JPanel {
         return time;
     }
     
+      //display available modules based on MUET band
      private void retrieveData() {
          
          int muet = lf.getMuet_band();
@@ -402,84 +338,8 @@ public class Course_Search extends javax.swing.JPanel {
      
     
      
-     /* private void comboPicker() {
-          
-            
-        int muet = lf.getMuet_band();
-        if(lf.getMuet_band()==6){
-            muet = 5;
-        }
-          String q1 = "SELECT * FROM VALID_MODULES WHERE STUDENTTYPE="+lf.getStudent_type()+" OR STUDENTTYPE=0 AND MUET=0 AND CSIT=0 OR MUET="+muet+" OR CSIT="+lf.getCsit()+"ORDER BY MODULE";
-         
-          try {
-              
-            ps = con.prepareStatement(q1);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                String MODULES = rs.getString("MODULE");
-                
-                if(MODULES.equals("WIA2001/WIB2001")){
-                  if(lf.getCsit()==1){
-                      MODULES = "WIA2001";
-                  } else if(lf.getCsit()==2){
-                      MODULES = "WIB2001";
-                  }
-                }
-
-                modulebox.addItem(MODULES);
-            }
-              
-          } catch (Exception e) {
-              JOptionPane.showMessageDialog(null, e);
-          }
-          
-          
-        
-    }*/
-      
-      /*private void filter(){
-          
-        
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(tblModel);
-          table1.setRowSorter(sorter);
-         List<RowFilter<DefaultTableModel, Object>> filters = new ArrayList<>();
-         
-         
-
-        modulebox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                if(filters.isEmpty())
-                    filters.add(RowFilter.regexFilter(modulebox.getSelectedItem().toString()));
-                else
-                    filters.set(0, RowFilter.regexFilter(modulebox.getSelectedItem().toString()));
-                // Apply filters
-                sorter.setRowFilter(RowFilter.andFilter(filters));
-            }
-        });
-
-        
-        
-        
-        occurencebox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                
-                
-                if(filters.size() < 2)
-                   filters.add(RowFilter.regexFilter(occurencebox.getSelectedItem().toString(),1));
-                    
-                   
-                else
-                  filters.set(1,RowFilter.regexFilter(occurencebox.getSelectedItem().toString(),1));
-                    //filters.set(1,RowFilter.numberFilter(RowFilter.ComparisonType.EQUAL,occurencebox.getSelectedIndex()));
-                // Apply filters
-                
-                sorter.setRowFilter(RowFilter.andFilter(filters));           
-            }
-        });
-        
      
-      }*/
-      
+      //check if the courses added would clash
       public boolean checkTime() {
         String q1 = "SELECT * FROM APP.REGISTEREDMODULES WHERE USERNAME='" + lf.getMatrixNo() + "'";
 
@@ -491,7 +351,7 @@ public class Course_Search extends javax.swing.JPanel {
         String time2 = model.getValueAt(index, 5).toString();
         String modules = model.getValueAt(index, 0).toString();
 
-        //LocalTime compareStart = LocalTime.parse(time1.substring(0, 5));
+        
         LocalTime compareStart = LocalTime.parse(time1.substring(0, 5));
         LocalTime compareEnd = LocalTime.parse(time2.substring(0, 5));
         
@@ -532,155 +392,7 @@ public class Course_Search extends javax.swing.JPanel {
         return false;
     }
       
-      /* public boolean checkTime() {
-        //SQL command to get all details from REGISTEREDMODULES database with the user's username/matrix number.
-       
-        String q1 = "SELECT * FROM APP.REGISTEREDMODULES WHERE USERNAME='" + lf.getMatrixNo() + "'";
-
-        TableModel model = table1.getModel();
-        int index = table1.getSelectedRow();
-        int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
-        String modulecode = (String) model.getValueAt(index, 0);
-        String time1 = model.getValueAt(index, 4).toString();
-        String time2 = model.getValueAt(index, 5).toString();
-        //String time1 = "";
-        //String time2 = "";
-        String day = "";
-        
-        try {
-            //Get TIMESTART and TIMEEND of the module from TIMETABLE_MODULES 
-            //String occtimes = "SELECT * FROM TIMETABLE_MODULES  WHERE MODULES='" + modulecode + "' AND OCCURENCE=" + occ + "";
-            String occtimes = "SELECT * FROM TIMETABLE_MODULES WHERE MODULES='" + modulecode + "' AND OCCURENCE=" + occ + "";
-            ps = con.prepareStatement(occtimes);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                String modules = rs.getString("MODULES");
-                time1 = rs.getString("TIMESTART").substring(0, 5);
-                time2 = rs.getString("TIMEEND").substring(0, 5);
-                time1 = convert24hours(time1.substring(0, 5));
-                time2 = convert24hours(time2.substring(0, 5));
-                day = rs.getString("DAY");
-
-                System.out.println(modules+" "+day + " " + time1 + " " + time2);
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-
-        LocalTime compareStart = LocalTime.parse(time1.substring(0, 5));
-        LocalTime compareEnd = LocalTime.parse(time2.substring(0, 5));
-
-        try {
-            ps = con.prepareStatement(q1);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-
-                String DAY2 = rs.getString("DAY");
-                String TIMESTART = rs.getString("TIMESTART");
-                String TIMEEND = rs.getString("TIMEEND");
-                activity2 = rs.getString("ACTIVITYTYPE");
-                module2 = rs.getString("MODULE");
-                occurence2 = rs.getString("OCC");
-
-                TIMESTART = convert24hours(TIMESTART.substring(0, 5));
-                TIMEEND = convert24hours(TIMEEND.substring(0, 5));
-
-                LocalTime targetStart = LocalTime.parse(TIMESTART.substring(0, 5));
-                LocalTime targetEnd = LocalTime.parse(TIMEEND.substring(0, 5));
-
-                if (day == null ? DAY2 == null : day.equals(DAY2)) {
-
-                    boolean NoClashClassAfterEnd = (targetStart.isAfter(compareEnd) || targetStart.equals(compareEnd));
-                    boolean NoClashClassBeforeStart = (targetEnd.isBefore(compareStart) || targetEnd.equals(compareStart));
-
-                    if (NoClashClassAfterEnd || NoClashClassBeforeStart) {
-
-                        continue;
-                    } else {
-
-                        return true;
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-
-        }
-        return false;
-    }*/
-      
-       //Method to check for the module's time conflicts with the user's timetable
-   /* public boolean checkTime() {
-        //SQL command to get all details from REGISTEREDMODULES database with the user's username/matrix number.
-        String q1 = "SELECT * FROM APP.REGISTEREDMODULES WHERE USERNAME='" + lf.getMatrixNo() + "'";
-
-        TableModel model = table1.getModel();
-        int index = table1.getSelectedRow();
-        int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
-        String time1 = "";
-        String time2 = "";
-        String day = "";
-        
-        try {
-            //Get TIMESTART and TIMEEND of the module from TIMETABLE_MODULES 
-            String occtimes = "SELECT * FROM TIMETABLE_MODULES WHERE MODULES='" + cr.getModuleCode() + "' AND OCCURENCE=" + occ + "";
-            ps = con.prepareStatement(occtimes);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                time1 = rs.getString("TIMESTART").substring(0, 5);
-                time2 = rs.getString("TIMEEND").substring(0, 5);
-                time1 = convert24hours(time1.substring(0, 5));
-                time2 = convert24hours(time2.substring(0, 5));
-                day = rs.getString("DAY");
-
-                System.out.println(day + " " + time1 + " " + time2);
-            }
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-
-        LocalTime compareStart = LocalTime.parse(time1.substring(0, 5));
-        LocalTime compareEnd = LocalTime.parse(time2.substring(0, 5));
-
-        try {
-            ps = con.prepareStatement(q1);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-
-                String DAY2 = rs.getString("DAY");
-                String TIMESTART = rs.getString("TIMESTART");
-                String TIMEEND = rs.getString("TIMEEND");
-                activity2 = rs.getString("ACTIVITYTYPE");
-                module2 = rs.getString("MODULE");
-                occurence2 = rs.getString("OCC");
-
-                TIMESTART = convert24hours(TIMESTART.substring(0, 5));
-                TIMEEND = convert24hours(TIMEEND.substring(0, 5));
-
-                LocalTime targetStart = LocalTime.parse(TIMESTART.substring(0, 5));
-                LocalTime targetEnd = LocalTime.parse(TIMEEND.substring(0, 5));
-
-                if (day == null ? DAY2 == null : day.equals(DAY2)) {
-
-                    boolean NoClashClassAfterEnd = (targetStart.isAfter(compareEnd) || targetStart.equals(compareEnd));
-                    boolean NoClashClassBeforeStart = (targetEnd.isBefore(compareStart) || targetEnd.equals(compareStart));
-
-                    if (NoClashClassAfterEnd || NoClashClassBeforeStart) {
-
-                        continue;
-                    } else {
-
-                        return true;
-                    }
-                }
-            }
-        } catch (SQLException e) {
-
-        }
-        return false;
-    }*/
-      
-        
+     
   
        
 
@@ -921,199 +633,9 @@ public class Course_Search extends javax.swing.JPanel {
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
         if (JOptionPane.showConfirmDialog(null, "Register the selected modules?", "WARNING",
         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-       
-            
-            
-
-         /* try{
-            
-            
-
-            int rows=table2.getRowCount();
-
-            for(int row = 0; row<rows; row++)
-            {   
-              int occ = Integer.parseInt(table2.getValueAt(row, 1).toString());
-                String type = table2.getValueAt(row, 2).toString();
-                String modulecode = table2.getValueAt(row, 0).toString();
-                String day = table2.getValueAt(row, 3).toString();
-                String time1 = table2.getValueAt(row, 4).toString();
-                String time2 = table2.getValueAt(row, 5).toString();
-                String username = lf.getMatrixNo();
-                String actual1 = "";  
-              //String qty = (String)table2.getValueAt(row, 0);
-              
-              //Integer unitprice = (Integer) table2.getValueAt(row, 1);
-              /*String description = (String)table2.getValueAt(row, 2);
-              String total = (String)table2.getValueAt(row, 3);
-              String queryco = "Insert into registeredmodules(USERNAME,MODULE,OCC,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,TYPE) values ('"+username+"','"+modulecode+"',"+occ+",'"+type+"','"+day+"','"+time1+"','"+time2+"',"+1+")";
-
-              ps= con.prepareStatement(queryco);
-              ps.execute();     
-            }*/
-            JOptionPane.showMessageDialog(null, "Successfully Save");
-        /*  }
-          catch(Exception e){
-            JOptionPane.showMessageDialog(this,e.getMessage());
-          }*/
-              
-              
-
-           
-            
-              /*String queryco = "Insert into registeredmodules(USERNAME,MODULE,OCC,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,TYPE) values ('"+username+"','"+modulecode+"',"+occ+",'"+type+"','"+day+"','"+time1+"','"+time2+"',"+1+")";
-
-              ps= con.prepareStatement(queryco);
-              ps.execute();     
-            }
-            JOptionPane.showMessageDialog(null, "Successfully Save");
-          }
-          catch(Exception e){
-            JOptionPane.showMessageDialog(this,e.getMessage());
-          }*/
    
-        /*int index = table1.getSelectedRow();
-        TableModel model = table1.getModel();
-
-        int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
-        String type = model.getValueAt(index, 2).toString();
-        String modulecode = model.getValueAt(index, 0).toString();
-        String day = model.getValueAt(index, 4).toString();
-        String time1 = model.getValueAt(index, 5).toString();
-        String time2 = model.getValueAt(index, 6).toString();
-        String username = lf.getMatrixNo();
-        String actual1 = "";
-
-        //If the module code is either WIA2001 or WIB2001, register the module under the code = WIA2001/WIB2001.
-        if (modulecode.equals("WIA2001") || modulecode.equals("WIB2001")) {
-            modulecode = "WIA2001/WIB2001";
-        }
-
-        try {
-            Statement st;
-            st = con.createStatement();
-            
-            //Check the amount of students already registered to the selected module
-            String checkCap = "SELECT COUNT(*) FROM app.REGISTEREDMODULES where module='" + modulecode + "' and OCC=" + occ + " and ACTIVITYTYPE='" + type + "' and TYPE=1";
-            ResultSet rs3 = st.executeQuery(checkCap);
-            rs3.next();
-            actual1 = rs3.getString(1);
-            System.out.println(actual1);
-
-        } catch (SQLException e) {
-            System.out.println("failed md484 " + e);
-        }
-
-        try {
-            Statement st;
-            st = con.createStatement();
-            
-            //SQL command to find number of rows with the same module.
-            String checkDuplicates = "SELECT COUNT(*) FROM app.REGISTEREDMODULES where module='" + modulecode + "' and USERNAME='" + username + "' and type=1";
-            ResultSet rs3 = st.executeQuery(checkDuplicates);
-            rs3.next();
-            String duplicatedRows = rs3.getString(1);
-            System.out.println(duplicatedRows);
-
-            boolean Clash = checkTime();
-
-            //Check for duplicates modules
-            if (duplicatedRows.equals("0")) {
-                //Check for time conflicts with student's timetable
-                if (Clash) {
-                    JOptionPane.showMessageDialog(null, "CLASHES WITH " + activity2 + " FOR " + module2 + " OCCURENCE " + occurence2);
-                } else if(cr.getCredithour()>22){
-                    JOptionPane.showMessageDialog(null, "CREDIT EXCEEDED 22 HOURS");
-                }
-                //Registers the module to the student's timetable.
-                else {
-                    int actual = Integer.parseInt(actual1) + 1;
-                    
-                    String registerModule = "INSERT INTO APP.REGISTEREDMODULES(USERNAME,MODULE,OCC,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,TYPE) SELECT '" + username + "',MODULES,OCCURENCE,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,1 FROM APP.TIMETABLE_MODULES WHERE OCCURENCE=" + occ + " AND  MODULES='" + modulecode + "'";
-                    String setActual = "UPDATE APP.TIMETABLE_MODULES SET ACTUAL=" + actual + " WHERE MODULES='" + modulecode + "' AND OCCURENCE=" + occ + "";
-
-                    st.execute(registerModule);
-                    st.execute(setActual);
-
-                    JOptionPane.showMessageDialog(null, "MODULE REGISTERED");
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "MODULE ALREADY REGISTERED");
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e);
-        }*/
-               /*int index = table1.getSelectedRow();
-                TableModel model = table1.getModel();
-              
-                int stdnt = lf.getStudent_type();
-                int occ = Integer.parseInt(model.getValueAt(index, 1).toString());
-                String type = model.getValueAt(index, 2).toString();
-                String modulecode = model.getValueAt(index, 0).toString();
-                String day = model.getValueAt(index, 5).toString();
-                String time1 = model.getValueAt(index, 6).toString();
-                String time2 = model.getValueAt(index, 7).toString();
-                String username = lf.getMatrixNo();
-                String actual1 = "";
-                
-                if (modulecode.equals("WIA2001") || modulecode.equals("WIB2001")) {
-                    modulecode = "WIA2001/WIB2001";
-                }
-                try {
-                    Statement st;
-                    st = con.createStatement();
-                    
-                    //check amount of students 
-                    String checkCap = "SELECT COUNT(*) FROM app.REGISTEREDMODULES where module='" + modulecode + "' and OCC=" + occ + " and ACTIVITYTYPE='" + type + "'";
-                    ResultSet rs3 = st.executeQuery(checkCap);
-                    rs3.next();
-                    actual1 = rs3.getString(1);
-                    System.out.println(actual1);
-
-                } catch (SQLException a) {
-                    System.out.println("failed md484");
-                }
-
-                try {
-                    Statement st;
-                    Statement st1;
-                    st = con.createStatement();
-                    String strQuery3 = "SELECT COUNT(*) FROM app.REGISTEREDMODULES where module='" + modulecode + "' and USERNAME='" + username + "'";
-                    ResultSet rs3 = st.executeQuery(strQuery3);
-                    rs3.next();
-                    String Countrow3 = rs3.getString(1);
-                    System.out.println(Countrow3);
-
-                    boolean Clash = checkTime();
-
-                    if (Clash) {
-                        JOptionPane.showMessageDialog(null, "CLASHES WITH " + activity2 + " FOR " + module2 + " OCCURENCE " + occurence2);
-                    } else if (Countrow3.equals("0")) {
-                        String reg = "INSERT INTO APP.REGISTEREDMODULES(USERNAME,MODULE,OCC,ACTIVITYTYPE,DAY,TIMESTART,TIMEEND,TYPE) VALUES ('" + username + "','" + modulecode + "'," + occ + ",'" + type + "','" + day + "','" + time1 + "','" + time2 + "'," + stdnt + ")";
-                        st = con.createStatement();
-                        st.execute(reg);
-
-                        int actual = Integer.parseInt(actual1) + 1;
-
-                        String setActual = "UPDATE APP.TIMETABLE_MODULES SET ACTUAL=" + actual + " WHERE MODULES='" + modulecode + "' AND OCCURENCE=" + occ + "";
-                        st1 = con.createStatement();
-                        st1.execute(setActual);
-                        
-                        //the selected row will be copied from jTable1 to jTable2
-
-                        JOptionPane.showMessageDialog(null, "MODULE REGISTERED");
-                    } else {
-                        JOptionPane.showMessageDialog(null, "MODULE ALREADY REGISTERED");
-
-                    }
-                } catch (SQLException a) {
-                    System.out.println("failed md401");
-                    JOptionPane.showMessageDialog(null, a);
-            }
-                   
-        } else {*/
-    // no option
-
+            JOptionPane.showMessageDialog(null, "MODULES REGISTERED");
+       
             
         }
     
@@ -1137,7 +659,7 @@ public class Course_Search extends javax.swing.JPanel {
                  String L = rs.getString("LECTURER");
                 String CAP = rs.getString("STUDENTCAP");
                  String ACT = rs.getString("ACTUAL");
-                 //String CREDIT = rs.getString("CREDIT");
+              
 
                 String tbData[] = {MODULES, OCC,AC,DAY, TS,TE,L,CAP,ACT};
 

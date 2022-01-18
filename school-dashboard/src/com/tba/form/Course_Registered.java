@@ -80,10 +80,11 @@ public class Course_Registered extends javax.swing.JPanel {
         initComponents();
         setVisible(true);
         setOpaque(false);
-        comboPicker();
+        
 
         table1.fixTable(jScrollPane1);
         tblModel = (DefaultTableModel) table1.getModel();
+        comboPicker();
 
         if (type.checkType() >= 1) {
             init();
@@ -95,7 +96,7 @@ public class Course_Registered extends javax.swing.JPanel {
         }
 
     }
-
+    //features for students
     private void init() {
 
         showButton();
@@ -104,7 +105,8 @@ public class Course_Registered extends javax.swing.JPanel {
         txtCred.setText("TOTAL CREDIT HOUR: "+(credithour));
 
     }
-
+    
+    //features for staff
     private void initStaff() {
 
         getModuleStaff();
@@ -142,20 +144,20 @@ public class Course_Registered extends javax.swing.JPanel {
     public int getHours() {
         return hours;
     }
-
+    
+    //feature for lecturer to edit capacity
     private void showButton() {
 
         Action edit = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
 
-                /*SpinnerNumberModel sModel = new SpinnerNumberModel(0, 0, 30, 1);
-                JSpinner spinner = new JSpinner(sModel);*/
+                
                 JTable table = (JTable) e.getSource();
                 int selectedRowIndex = table.getSelectedRow();
+                String cap = table.getValueAt(selectedRowIndex, 6).toString();
 
-                //int target_num = Integer.parseInt((int) table.getValueAt(selectedRowIndex, 3));
-                //table.setValueAt(newTG, selectedRowIndex, 3);
-                int scap = Integer.parseInt((String) table.getValueAt(selectedRowIndex, 6));
+                
+                int scap = Integer.parseInt(cap);
                 int newTG = Integer.parseInt(JOptionPane.showInputDialog(null, "Target Number", scap));
                 boolean scap_limit = true;
 
@@ -168,9 +170,7 @@ public class Course_Registered extends javax.swing.JPanel {
 
                 }
 
-                //updateTG(newTG);
-                //table.setValueAt(newTG, selectedRowIndex, 4);
-                //as.setVisible(tr);
+                
             }
         };
 
@@ -179,11 +179,12 @@ public class Course_Registered extends javax.swing.JPanel {
         }
 
     }
-
+    
+    //feature to display modules based on user student
     private void getModules() {
 
         String q1 = "SELECT * FROM REGISTEREDMODULES WHERE username = '" + lf.getMatrixNo() + "'";
-        // String q1 = "SELECT * FROM TIMETABLE_MODULES JOIN REGISTEREDMODULES ON REGISTEREDMODULES.username = '" + lf.getMatrixNo() + "'WHERE REGISTEREDMODULES.MODULE = TIMETABLE_MODULES.MODULES";
+        
         try {
             ps = con.prepareStatement(q1);
             rs = ps.executeQuery();
@@ -205,6 +206,7 @@ public class Course_Registered extends javax.swing.JPanel {
         }
     }
 
+    //feature to display modules based on user staff
     private void getModuleStaff() {
 
         String q1 = "SELECT * FROM TIMETABLE_MODULES JOIN LOGINTABLE ON LOGINTABLE.matrix_number = '" + lf.getMatrixNo() + "' AND TIMETABLE_MODULES.lecturer=LOGINTABLE.FULLNAME";
@@ -230,23 +232,24 @@ public class Course_Registered extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, e);
         }
     }
-
+    
+    //method to update capacity
     private void updateTG(int TG) {
 
         try {
             DefaultTableModel tb = (DefaultTableModel) table1.getModel();
             int rows = tb.getRowCount();
-            //for (int i = 0; i < rows; i++) {
+           
             String modules = tb.getValueAt(table1.getSelectedRow(), 0).toString();
             String occurence = tb.getValueAt(table1.getSelectedRow(), 1).toString();
             String act = tb.getValueAt(table1.getSelectedRow(), 2).toString();
 
-            //String query = "UPDATE TIMETABLE_MODULES SET CAPACITY = '"+TG+"' WHERE MODULES ='"+a+"'";
+           
             String query = "UPDATE TIMETABLE_MODULES" + " SET STUDENTCAP = " + TG + " WHERE MODULES ='" + modules + "'AND "
                     + "OCCURENCE =" + occurence + " AND ACTIVITYTYPE='" + act + "'";
             ps = con.prepareStatement(query);
 
-            //ps.setInt(7, TG);
+           
             ps.executeUpdate();
             JOptionPane.showMessageDialog(null, "Updated Successfully");
 
@@ -255,68 +258,7 @@ public class Course_Registered extends javax.swing.JPanel {
         }
     }
 
-    /*  public void setCredits(){
-        
-        try{
-            //Gets all details from REGISTEREDMODULES database with the user's username
-            String getCredit = "SELECT * FROM REGISTEREDMODULES WHERE USERNAME='"+lf.getMatrixNo()+"'";
-            ps = con.prepareStatement(getCredit);
-            rs = ps.executeQuery();
-            int totalcred = 0;
-            //Gets the TIMESTART and TIMEEND of the modules
-            while(rs.next()){
-                int time1 = Integer.parseInt(rs.getString("TIMESTART").substring(0,2));
-                int time2 = Integer.parseInt(rs.getString("TIMEEND").substring(0,2));
-                int time = time2-time1;
-                if(time<0){
-                    time = time+12;
-                }
-                //Getting the cummulative time duration (credit hour) of the modules registered to the student
-                totalcred = totalcred+time;
-
-                txtCred.setText("TOTAL CREDIT HOUR: "+String.valueOf(totalcred));
-            }
-            } catch(SQLException e){
-            
-        }
-    }*/
-//            ps = con.prepareStatement(getCredit);
-//            rs = ps.executeQuery();
-//                PreparedStatement ps2 = null;
-//                ps2 = con.prepareStatement(getCredit);
-//                ResultSet rs2 = null;
-//                rs2 = ps2.executeQuery();
-//
-//                // tsnm's code starts here
-//                //modules list
-//                List<String> modules = new LinkedList<>();
-//                while (rs2.next()) {
-//                    modules.add(rs2.getString("MODULE"));
-//                    System.out.println(rs2.getString("MODULE"));
-//                }
-//                System.out.println("");
-//
-//                for (int i = 0; i < modules.size(); i++) {
-//
-//                    String currentModule = modules.get(i);
-//                    System.out.println("currentModule: " + currentModule);
-//
-//                    System.out.println("i=" + i);
-//
-//                    for (int j = i + 1; j < modules.size(); j++) {
-//                        System.out.println("j=" + j);
-//                        String modComparedTo = modules.get(j);
-//                        System.out.println("//////////////modComparedTo :" + modComparedTo);
-//
-//                        if (currentModule.equalsIgnoreCase(modComparedTo)) {
-//                            System.out.println("skip");
-//                            System.out.println(modules);
-//                            continue skip;
-//                        }
-//                    }
-//
-//                    System.out.println(rs.getString("MODULE"));
-    //tsnm's code ends here
+  
 
     public static int getCredithour() {
         return credithour;
@@ -328,11 +270,11 @@ public class Course_Registered extends javax.swing.JPanel {
     
     
     
-    
+    //method to set total credit
     public void setCredits(){
         int totalcred = 0;
         try{
-            //Gets all details from REGISTEREDMODULES database with the user's username
+          
             String getCredit = "SELECT * FROM REGISTEREDMODULES WHERE USERNAME='"+lf.getMatrixNo()+"'";
             ps = con.prepareStatement(getCredit);
             rs = ps.executeQuery();
@@ -354,7 +296,8 @@ public class Course_Registered extends javax.swing.JPanel {
             System.out.println(e);
         }
     }
-
+    
+    //method to show modules in combo box
     private void comboPicker() {
 
         String q1 = "SELECT * FROM REGISTEREDMODULES WHERE REGISTEREDMODULES.username = '" + lf.getMatrixNo() + "'";
@@ -382,7 +325,7 @@ public class Course_Registered extends javax.swing.JPanel {
         }
 
     }
-
+    //method to filter out the jtable based on the combo box
     private void filter() {
 
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(tblModel);
@@ -409,7 +352,7 @@ public class Course_Registered extends javax.swing.JPanel {
                 } else {
                     filters.set(1, RowFilter.regexFilter(occbox.getSelectedItem().toString(), 1));
                 }
-                //filters.set(1,RowFilter.numberFilter(RowFilter.ComparisonType.EQUAL,occurencebox.getSelectedIndex()));
+                
                 // Apply filters
 
                 sorter.setRowFilter(RowFilter.andFilter(filters));

@@ -22,7 +22,7 @@ import javax.swing.UIManager;
 public class AdminAddModule extends javax.swing.JFrame {
 
     AdminModules am = new AdminModules();
-//    modulesDetail md = new modulesDetail();
+
     java.sql.PreparedStatement ps = null;
     ResultSet rs = null;
     Connection con = ConnectDatabase.connectdb();
@@ -40,7 +40,8 @@ public class AdminAddModule extends javax.swing.JFrame {
         getHours();
         hideHours();
     }
-
+    
+    //get the hours
     public void getHours() {
         int min = 0;
         int max = Integer.parseInt(txtCredit.getSelectedItem().toString());
@@ -51,7 +52,7 @@ public class AdminAddModule extends javax.swing.JFrame {
         TutHour.setModel(valueTut);
         LabHour.setModel(valueLab);
     }
-
+    //hide hours for lecturer
     public void hideHours() {
         LabHour.setVisible(false);
         LecHour.setVisible(false);
@@ -365,7 +366,7 @@ public class AdminAddModule extends javax.swing.JFrame {
     }//GEN-LAST:event_txtSpec2ActionPerformed
 
     private void txtSpec1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSpec1ActionPerformed
-        // TODO add your handling code here:
+        
         if (txtSpec1.getSelectedItem().toString().equals("COMPUTER SCIENCE")) {
             txtSpec2.setVisible(true);
             txtSpec2.addItem("Artificial Intelligence");

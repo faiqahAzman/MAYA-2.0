@@ -64,7 +64,7 @@ public class Main extends javax.swing.JFrame {
         type = new ModelStudentType();
        
         
-        
+        //adds feature for user to logout
         header.logOut(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -74,7 +74,7 @@ public class Main extends javax.swing.JFrame {
         });
        
         
-        
+        //adds feature for user to minimize window
          header.minimizeEvent(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent a) {
@@ -82,7 +82,7 @@ public class Main extends javax.swing.JFrame {
                 
             }
         });
-         
+        //adds feature for user to maximize window 
         header.maximizeEvent(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -99,7 +99,7 @@ public class Main extends javax.swing.JFrame {
          
         
         
-       
+       //adds clickable side menu
         menu.addEvent(new EventMenuSelected() {
             @Override
             public void menuSelected(int menuIndex, int subMenuIndex) {
@@ -109,7 +109,7 @@ public class Main extends javax.swing.JFrame {
                     if (subMenuIndex == 0) {
                         main.showForm(new Form_Home());
                     } else if (subMenuIndex == 1) {
-                       // main.showForm(new Form1());
+                      
                     }
                     
                     
@@ -185,6 +185,7 @@ public class Main extends javax.swing.JFrame {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         });
+        //shows a pop up when side menu is minimized
         menu.addEventShowPopup(new EventShowPopupMenu() {
             @Override
             public void showPopup(Component com) {
@@ -227,6 +228,7 @@ public class Main extends javax.swing.JFrame {
             }
 
         };
+        //add animations
         animator = new Animator(500, target);
         animator.setResolution(0);
         animator.setDeceleration(0.5f);

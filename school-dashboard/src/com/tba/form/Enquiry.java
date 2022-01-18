@@ -210,7 +210,7 @@ public class Enquiry extends javax.swing.JPanel {
 
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
         try {
-            
+            //makes sure that all areas are filled before submitting
             String name = nametxt.getText();
             String email = emailtxt.getText();
             String phone = phonetxt.getText();
